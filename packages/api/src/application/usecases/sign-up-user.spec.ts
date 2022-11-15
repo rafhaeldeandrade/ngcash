@@ -2,7 +2,8 @@ import { User } from '@/domain/entitities/user'
 import { UserRepository } from '@/domain/repositories/user-repository'
 import { SignUpUser, SignUpUserInput } from '@/domain/usecases/sign-up-user'
 import { faker } from '@faker-js/faker'
-import { SignUpUserUseCase } from './sign-up-user'
+import { UserAlreadyExistsError } from '@/application/errors'
+import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
 
 function makeFakeUser(): User {
   return {
@@ -14,8 +15,8 @@ function makeFakeUser(): User {
 }
 
 class UserRepositoryStub implements UserRepository {
-  async getUserByUsername(username: string): Promise<User> {
-    return makeFakeUser()
+  async getUserByUsername(username: string): Promise<User | null> {
+    return null
   }
 }
 
@@ -51,5 +52,17 @@ describe('SignUpUserUseCase', () => {
     await sut.execute(input)
     expect(getUserByUsernameSpy).toHaveBeenCalledTimes(1)
     expect(getUserByUsernameSpy).toHaveBeenCalledWith(input.username)
+  })
+
+  it('should throw UserAlreadyExistsError if UserRepository.getUserByUsername returns an user', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .mockResolvedValueOnce(makeFakeUser())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(
+      new UserAlreadyExistsError(input.username)
+    )
   })
 })
