@@ -19,13 +19,14 @@ function makeFakeUser(): User {
   }
 }
 
+const fakeuser = makeFakeUser()
 class UserRepositoryStub implements UserRepository {
   async getUserByUsername(username: string): Promise<User | null> {
     return null
   }
 
   async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
-    return makeFakeUser()
+    return fakeuser
   }
 }
 
@@ -132,5 +133,14 @@ describe('SignUpUserUseCase', () => {
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should return the correct value on success', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const result = await sut.execute(input)
+    expect(result).toEqual({
+      id: fakeuser.id
+    })
   })
 })
