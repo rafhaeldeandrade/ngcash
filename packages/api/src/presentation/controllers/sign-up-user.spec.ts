@@ -54,4 +54,19 @@ describe('SignUpUser Controller', () => {
       }
     })
   })
+
+  it('should return 500 if schemaValidate.validate throws an error', async () => {
+    const { sut, schemaValidateStub } = makeSut()
+    jest
+      .spyOn(schemaValidateStub, 'validate')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
