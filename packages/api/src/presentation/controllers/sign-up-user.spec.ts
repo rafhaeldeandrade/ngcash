@@ -6,6 +6,7 @@ import {
   SignUpUserInput,
   SignUpUserOutput
 } from '@/domain/usecases/sign-up-user'
+import { UserAlreadyExistsError } from '@/application/errors'
 
 class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | null> {
@@ -98,6 +99,23 @@ describe('SignUpUser Controller', () => {
     expect(signUpSpy).toHaveBeenCalledWith({
       username: httpRequest.body.username,
       password: httpRequest.body.password
+    })
+  })
+
+  it('should return 409 if signUpUserUseCase.signUp throws UserAlreadyExistsError', async () => {
+    const { sut, signUpUserUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(signUpUserUseCaseStub, 'signUp')
+      .mockRejectedValueOnce(
+        new UserAlreadyExistsError(httpRequest.body.username)
+      )
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 409,
+      body: {
+        message: `User with username ${httpRequest.body.username} already exists`
+      }
     })
   })
 })
