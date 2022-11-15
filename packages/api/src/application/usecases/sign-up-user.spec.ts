@@ -4,7 +4,11 @@ import { SignUpUser, SignUpUserInput } from '@/domain/usecases/sign-up-user'
 import { faker } from '@faker-js/faker'
 import { UserAlreadyExistsError } from '@/application/errors'
 import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
-import { Hasher } from '../contracts'
+import { Hasher } from '@/application/contracts'
+import {
+  SaveNewUserInput,
+  SaveNewUserOutput
+} from '@/domain/repositories/user-repository'
 
 function makeFakeUser(): User {
   return {
@@ -19,11 +23,16 @@ class UserRepositoryStub implements UserRepository {
   async getUserByUsername(username: string): Promise<User | null> {
     return null
   }
+
+  async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
+    return makeFakeUser()
+  }
 }
 
+const hashedPassword = `${faker.internet.password()}-hashed`
 class HasherAdapterStub implements Hasher {
   async hash(value: string): Promise<string> {
-    return `${faker.datatype.uuid}_hashed`
+    return hashedPassword
   }
 }
 
@@ -91,5 +100,17 @@ describe('SignUpUserUseCase', () => {
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should call userRepository.saveNewUser with the correct values', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    const saveNewUserSpy = jest.spyOn(userRepositoryStub, 'saveNewUser')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(saveNewUserSpy).toHaveBeenCalledTimes(1)
+    expect(saveNewUserSpy).toHaveBeenCalledWith({
+      username: input.username,
+      password: hashedPassword
+    })
   })
 })
