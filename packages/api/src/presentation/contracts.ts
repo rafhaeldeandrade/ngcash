@@ -12,5 +12,5 @@ export interface Controller {
 }
 
 export interface SchemaValidate {
-  validate(input: any): Promise<Error | null>
+  validate(input: any): Promise<Error | void>
 }

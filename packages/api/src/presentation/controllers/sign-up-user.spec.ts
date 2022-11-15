@@ -9,8 +9,8 @@ import {
 import { UserAlreadyExistsError } from '@/application/errors'
 
 class SchemaValidateStub implements SchemaValidate {
-  async validate(input: any): Promise<Error | null> {
-    return null
+  async validate(input: any): Promise<Error | void> {
+    return Promise.resolve()
   }
 }
 
