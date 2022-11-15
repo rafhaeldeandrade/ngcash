@@ -17,13 +17,13 @@
     "prepare": "husky install",
     "postinstall": "husky install",
     "lint-staged": "lint-staged",
-    "api:test:precommit": "yarn workspaces @monorepo/api test:unit",
+    "api:test:precommit": "yarn workspaces @monorepo/api test:precommit",
     "api:lint": "yarn workspaces @monorepo/api lint"
   },
   "lint-staged": {
     "packages/api/**/*.ts": [
       "npm run api:lint",
-      "npm run api:test:unit"
+      "npm run api:test:precommit"
     ]
   }
 }
