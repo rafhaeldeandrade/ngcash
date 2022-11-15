@@ -6,3 +6,10 @@ export const badRequest = (error: Error): HttpResponse => ({
     message: error.message
   }
 })
+
+export const internalServerError = (): HttpResponse => ({
+  statusCode: 500,
+  body: {
+    message: 'Internal server error'
+  }
+})
