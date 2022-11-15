@@ -85,6 +85,16 @@ describe('SignUpUserUseCase', () => {
     )
   })
 
+  it('should throw if userRepository.getUserByUsername throws', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
+
   it('should call hasher.hash with the correct value', async () => {
     const { sut, hasherAdapterStub } = makeSut()
     const hashSpy = jest.spyOn(hasherAdapterStub, 'hash')
