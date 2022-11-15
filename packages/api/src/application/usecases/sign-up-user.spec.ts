@@ -113,4 +113,14 @@ describe('SignUpUserUseCase', () => {
       password: hashedPassword
     })
   })
+
+  it('should throw if userRepository.saveNewUser throws', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'saveNewUser')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
