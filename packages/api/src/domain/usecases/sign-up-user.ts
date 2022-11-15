@@ -10,5 +10,5 @@ export type SignUpUserOutput = {
 }
 
 export interface SignUpUser {
-  signUp: (input: SignUpUserInput) => Promise<SignUpUserOutput>
+  execute: (input: SignUpUserInput) => Promise<SignUpUserOutput>
 }

@@ -15,7 +15,7 @@ class SchemaValidateStub implements SchemaValidate {
 }
 
 class SignUpUserUseCaseStub implements SignUpUser {
-  async signUp(input: SignUpUserInput): Promise<SignUpUserOutput> {
+  async execute(input: SignUpUserInput): Promise<SignUpUserOutput> {
     return {
       id: faker.datatype.uuid()
     }
@@ -90,23 +90,23 @@ describe('SignUpUser Controller', () => {
     })
   })
 
-  it('should call signUpUserUseCase.signUp with the correct values', async () => {
+  it('should call signUpUserUseCase.execute with the correct values', async () => {
     const { sut, signUpUserUseCaseStub } = makeSut()
-    const signUpSpy = jest.spyOn(signUpUserUseCaseStub, 'signUp')
+    const executeSpy = jest.spyOn(signUpUserUseCaseStub, 'execute')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(signUpSpy).toHaveBeenCalledTimes(1)
-    expect(signUpSpy).toHaveBeenCalledWith({
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+    expect(executeSpy).toHaveBeenCalledWith({
       username: httpRequest.body.username,
       password: httpRequest.body.password
     })
   })
 
-  it('should return 409 if signUpUserUseCase.signUp throws UserAlreadyExistsError', async () => {
+  it('should return 409 if signUpUserUseCase.execute throws UserAlreadyExistsError', async () => {
     const { sut, signUpUserUseCaseStub } = makeSut()
     const httpRequest = makeFakeRequest()
     jest
-      .spyOn(signUpUserUseCaseStub, 'signUp')
+      .spyOn(signUpUserUseCaseStub, 'execute')
       .mockRejectedValueOnce(
         new UserAlreadyExistsError(httpRequest.body.username)
       )

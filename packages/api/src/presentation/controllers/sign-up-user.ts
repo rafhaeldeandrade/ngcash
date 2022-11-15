@@ -18,7 +18,7 @@ export class SignUpUserController implements Controller {
     try {
       const error = await this.schemaValidate.validate(httpRequest.body)
       if (error) return badRequest(error)
-      const result = await this.signUpUserUseCase.signUp({
+      const result = await this.signUpUserUseCase.execute({
         username: httpRequest.body.username,
         password: httpRequest.body.password
       })
