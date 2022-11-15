@@ -5,10 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import {
-  badRequest,
-  internalServerError
-} from '@/presentation/helpers/http-helper'
+import { badRequest, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '../helpers/error-adapter'
 
 export class SignUpUserController implements Controller {
@@ -21,11 +18,11 @@ export class SignUpUserController implements Controller {
     try {
       const error = await this.schemaValidate.validate(httpRequest.body)
       if (error) return badRequest(error)
-      await this.signUpUserUseCase.signUp({
+      const result = await this.signUpUserUseCase.signUp({
         username: httpRequest.body.username,
         password: httpRequest.body.password
       })
-      return null as unknown as HttpResponse
+      return ok(result)
     } catch (e) {
       return errorAdapter(e as Error)
     }

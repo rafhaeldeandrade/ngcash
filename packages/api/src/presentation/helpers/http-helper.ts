@@ -20,3 +20,8 @@ export const conflict = (error: Error): HttpResponse => ({
     message: error.message
   }
 })
+
+export const ok = (data: any): HttpResponse => ({
+  statusCode: 200,
+  body: data
+})
