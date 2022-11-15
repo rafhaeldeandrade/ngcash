@@ -9,6 +9,7 @@ import {
   badRequest,
   internalServerError
 } from '@/presentation/helpers/http-helper'
+import { errorAdapter } from '../helpers/error-adapter'
 
 export class SignUpUserController implements Controller {
   constructor(
@@ -26,7 +27,7 @@ export class SignUpUserController implements Controller {
       })
       return null as unknown as HttpResponse
     } catch (e) {
-      return internalServerError()
+      return errorAdapter(e as Error)
     }
   }
 }

@@ -13,3 +13,10 @@ export const internalServerError = (): HttpResponse => ({
     message: 'Internal server error'
   }
 })
+
+export const conflict = (error: Error): HttpResponse => ({
+  statusCode: 409,
+  body: {
+    message: error.message
+  }
+})
