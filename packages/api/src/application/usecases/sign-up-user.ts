@@ -18,10 +18,12 @@ export class SignUpUserUseCase implements SignUpUser {
     const user = await this.userRepository.getUserByUsername(username)
     if (user) throw new UserAlreadyExistsError(username)
     const hashedPassword = await this.hasher.hash(password)
-    await this.userRepository.saveNewUser({
+    const savedUser = await this.userRepository.saveNewUser({
       username,
       password: hashedPassword
     })
-    return null as unknown as SignUpUserOutput
+    return {
+      id: savedUser.id
+    }
   }
 }
