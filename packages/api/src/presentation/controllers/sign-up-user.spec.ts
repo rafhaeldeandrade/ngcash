@@ -1,6 +1,11 @@
 import { faker } from '@faker-js/faker'
 import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
 import { SignUpUserController } from '@/presentation/controllers/sign-up-user'
+import {
+  SignUpUser,
+  SignUpUserInput,
+  SignUpUserOutput
+} from '@/domain/usecases/sign-up-user'
 
 class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | null> {
@@ -8,17 +13,31 @@ class SchemaValidateStub implements SchemaValidate {
   }
 }
 
+class SignUpUserUseCaseStub implements SignUpUser {
+  async signUp(input: SignUpUserInput): Promise<SignUpUserOutput> {
+    return {
+      id: faker.datatype.uuid()
+    }
+  }
+}
+
 interface SutTypes {
   sut: SignUpUserController
   schemaValidateStub: SchemaValidate
+  signUpUserUseCaseStub: SignUpUser
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const sut = new SignUpUserController(schemaValidateStub)
+  const signUpUserUseCaseStub = new SignUpUserUseCaseStub()
+  const sut = new SignUpUserController(
+    schemaValidateStub,
+    signUpUserUseCaseStub
+  )
   return {
     sut,
-    schemaValidateStub
+    schemaValidateStub,
+    signUpUserUseCaseStub
   }
 }
 
@@ -67,6 +86,18 @@ describe('SignUpUser Controller', () => {
       body: {
         message: 'Internal server error'
       }
+    })
+  })
+
+  it('should call signUpUserUseCase.signUp with the correct values', async () => {
+    const { sut, signUpUserUseCaseStub } = makeSut()
+    const signUpSpy = jest.spyOn(signUpUserUseCaseStub, 'signUp')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(signUpSpy).toHaveBeenCalledTimes(1)
+    expect(signUpSpy).toHaveBeenCalledWith({
+      username: httpRequest.body.username,
+      password: httpRequest.body.password
     })
   })
 })
