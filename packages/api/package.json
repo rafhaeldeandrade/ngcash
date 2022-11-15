@@ -4,7 +4,11 @@
   "main": "index.js",
   "author": "Rafhael Gomes",
   "license": "MIT",
+  "scripts": {
+    "test:unit": "jest --config jest.config.js --watch --maxWorkers=25%"
+  },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "5.10.0",
