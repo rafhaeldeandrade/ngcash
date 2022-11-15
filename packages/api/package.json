@@ -5,7 +5,8 @@
   "author": "Rafhael Gomes",
   "license": "MIT",
   "scripts": {
-    "test:unit": "jest --config jest.config.js --watch --maxWorkers=25%"
+    "test:unit": "jest --config jest.config.js --watch --maxWorkers=25%",
+    "lint": "eslint --ext .ts src"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
