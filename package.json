@@ -1,0 +1,29 @@
+{
+  "name": "@monorepo/core",
+  "version": "1.0.0",
+  "author": "Rafhael Gomes <rafhael@protonmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.3"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "postinstall": "husky install",
+    "lint-staged": "lint-staged",
+    "api:test:unit": "yarn workspaces @monorepo/api test:unit",
+    "api:lint": "yarn workspaces @monorepo/api lint"
+  },
+  "lint-staged": {
+    "packages/api/**/*.ts": [
+      "npm run api:lint",
+      "npm run api:test:unit"
+    ]
+  }
+}
