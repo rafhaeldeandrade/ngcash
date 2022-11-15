@@ -4,6 +4,7 @@ import { SignUpUser, SignUpUserInput } from '@/domain/usecases/sign-up-user'
 import { faker } from '@faker-js/faker'
 import { UserAlreadyExistsError } from '@/application/errors'
 import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
+import { Hasher } from '../contracts'
 
 function makeFakeUser(): User {
   return {
@@ -20,17 +21,26 @@ class UserRepositoryStub implements UserRepository {
   }
 }
 
+class HasherAdapterStub implements Hasher {
+  async hash(value: string): Promise<string> {
+    return `${faker.datatype.uuid}_hashed`
+  }
+}
+
 interface SutTypes {
   sut: SignUpUser
   userRepositoryStub: UserRepository
+  hasherAdapterStub: Hasher
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
-  const sut = new SignUpUserUseCase(userRepositoryStub)
+  const hasherAdapterStub = new HasherAdapterStub()
+  const sut = new SignUpUserUseCase(userRepositoryStub, hasherAdapterStub)
   return {
     sut,
-    userRepositoryStub
+    userRepositoryStub,
+    hasherAdapterStub
   }
 }
 
@@ -64,5 +74,14 @@ describe('SignUpUserUseCase', () => {
     await expect(promise).rejects.toThrow(
       new UserAlreadyExistsError(input.username)
     )
+  })
+
+  it('should call hasher.hash with the correct value', async () => {
+    const { sut, hasherAdapterStub } = makeSut()
+    const hashSpy = jest.spyOn(hasherAdapterStub, 'hash')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(hashSpy).toHaveBeenCalledTimes(1)
+    expect(hashSpy).toHaveBeenCalledWith(input.password)
   })
 })
