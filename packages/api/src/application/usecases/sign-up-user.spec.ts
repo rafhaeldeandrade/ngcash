@@ -84,4 +84,12 @@ describe('SignUpUserUseCase', () => {
     expect(hashSpy).toHaveBeenCalledTimes(1)
     expect(hashSpy).toHaveBeenCalledWith(input.password)
   })
+
+  it('should throw if hasher.hash throws', async () => {
+    const { sut, hasherAdapterStub } = makeSut()
+    jest.spyOn(hasherAdapterStub, 'hash').mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
