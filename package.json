@@ -17,8 +17,8 @@
     "prepare": "husky install",
     "postinstall": "husky install",
     "lint-staged": "lint-staged",
-    "api:test:precommit": "yarn workspaces @monorepo/api test:precommit",
-    "api:lint": "yarn workspaces @monorepo/api lint"
+    "api:test:precommit": "yarn workspaces run @monorepo/api test:precommit",
+    "api:lint": "yarn workspaces run @monorepo/api lint"
   },
   "lint-staged": {
     "packages/api/**/*.ts": [
