@@ -18,6 +18,7 @@
     "postinstall": "husky install",
     "lint-staged": "lint-staged",
     "api:test:precommit": "yarn --cwd packages/api test:precommit",
+    "api:test:prepush": "yarn --cwd packages/api test:prepush",
     "api:lint": "yarn --cwd packages/api lint"
   },
   "lint-staged": {
