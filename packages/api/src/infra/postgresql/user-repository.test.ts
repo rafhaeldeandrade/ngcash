@@ -46,3 +46,33 @@ describe('PostgreSQLUserRepository.getUserByUsername', () => {
     expect(result).toBeNull()
   })
 })
+
+describe('PostgreSQLUserRepository.saveNewUser', () => {
+  beforeAll(async () => {
+    await prismaHelper.connect()
+  })
+
+  afterAll(async () => {
+    await prismaHelper.disconnect()
+  })
+
+  beforeEach(async () => {
+    await prismaHelper.prisma.user.deleteMany()
+    await prismaHelper.prisma.account.deleteMany()
+  })
+
+  it("should create an account and set its id to the user's accountId", async () => {
+    const username = faker.internet.userName()
+    const password = faker.internet.password()
+
+    const sut = new PostgreSQLUserRepository()
+    const user = await sut.saveNewUser({ username, password })
+    const account = await prismaHelper.prisma.account.findUnique({
+      where: {
+        id: user.accountId
+      }
+    })
+
+    expect(account).not.toBeNull()
+  })
+})
