@@ -10,5 +10,5 @@ export default {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
   testMatch: ['**/*.spec.ts', '**/*.test.ts'],
-  setupFiles: ['<rootDir>/dotenv/config.ts']
+  setupFiles: ['<rootDir>/test/setup-tests.ts']
 }
