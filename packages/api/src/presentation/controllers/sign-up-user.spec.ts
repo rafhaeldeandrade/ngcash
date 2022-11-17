@@ -17,7 +17,7 @@ class SchemaValidateStub implements SchemaValidate {
 class SignUpUserUseCaseStub implements SignUpUser {
   async execute(input: SignUpUserInput): Promise<SignUpUserOutput> {
     return {
-      id: faker.datatype.uuid()
+      id: faker.datatype.number()
     }
   }
 }
@@ -126,7 +126,7 @@ describe('SignUpUser Controller', () => {
     expect(httpResponse).toEqual({
       statusCode: 200,
       body: {
-        id: expect.any(String)
+        id: expect.any(Number)
       }
     })
   })

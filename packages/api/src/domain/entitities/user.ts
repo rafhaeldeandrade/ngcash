@@ -1,4 +1,4 @@
-export type UniqueId = string
+export type UniqueId = number
 
 export type User = {
   id: UniqueId

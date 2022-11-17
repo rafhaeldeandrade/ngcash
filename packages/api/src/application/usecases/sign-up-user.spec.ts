@@ -12,10 +12,10 @@ import {
 
 function makeFakeUser(): User {
   return {
-    id: faker.datatype.uuid(),
+    id: faker.datatype.number(),
     username: faker.internet.userName(),
     password: faker.internet.password(),
-    accountId: faker.datatype.uuid()
+    accountId: faker.datatype.number()
   }
 }
 
