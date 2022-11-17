@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -20,7 +21,7 @@ model User {
   username     String        @unique @db.VarChar(25)
   password     String        @db.VarChar(80)
   accountId    Int           @unique
-  account      Account       @relation(fields: [accountId], references: [id])
+  account      Account?      @relation(fields: [accountId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }

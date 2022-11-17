@@ -5,9 +5,15 @@
   "author": "Rafhael Gomes",
   "license": "MIT",
   "scripts": {
-    "test:unit": "jest --config jest.config.js --watch --maxWorkers=25%",
-    "lint": "eslint --ext .ts src --fix",
-    "test:precommit": "jest --config jest.config.js --passWithNoTests --maxWorkers=25% --findRelatedTests"
+    "migrate:postgresql:test": "dotenv -e .env.test -- npx prisma migrate dev --name postgres-init",
+    "migrate:postgresql:dev": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init",
+    "migrate:postgresql:prod": "dotenv -e .env.production -- npx prisma migrate dev --name postgres-init",
+    "test": "jest --passWithNoTests --silent --noStackTrace",
+    "test:unit": "npm test -- -c jest.config.unit --watch --maxWorkers=25%",
+    "test:integration": "npm test -- -c jest.config.integration.ts --watch --maxWorkers=25%",
+    "test:precommit": "npm test -- --maxWorkers=25% --findRelatedTests",
+    "test:prepush": "npm test -- -c jest.config.ts --coverage --maxWorkers=25%",
+    "lint": "eslint --ext .ts src --fix"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
@@ -15,6 +21,7 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "5.10.0",
     "@typescript-eslint/parser": "5.10.0",
+    "dotenv-cli": "^6.0.0",
     "eslint": "8.7.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",
@@ -26,6 +33,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.6.1",
+    "dotenv": "^16.0.3",
     "prisma": "^4.6.1",
     "zod": "^3.19.1"
   }
