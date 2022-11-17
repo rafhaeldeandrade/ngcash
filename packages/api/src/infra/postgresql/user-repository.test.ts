@@ -37,4 +37,12 @@ describe('PostgreSQLUserRepository.getUserByUsername', () => {
 
     expect(result).toEqual(user)
   })
+
+  it('should return null when a user is not found', async () => {
+    const username = faker.internet.userName()
+    const sut = new PostgreSQLUserRepository()
+    const result = await sut.getUserByUsername(username)
+
+    expect(result).toBeNull()
+  })
 })
