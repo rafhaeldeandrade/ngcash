@@ -5,7 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import { badRequest } from '@/presentation/helpers/http-helper'
+import { badRequest, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '@/presentation/helpers/error-adapter'
 
 export class LoadUserAccountBalanceController implements Controller {
@@ -18,15 +18,10 @@ export class LoadUserAccountBalanceController implements Controller {
     try {
       const error = await this.schemaValidate.validate(httpRequest.user)
       if (error) return badRequest(error)
-      await this.loadUserAccountBalanceUseCase.execute(
+      const balance = await this.loadUserAccountBalanceUseCase.execute(
         httpRequest.user?.accountId as number
       )
-      return Promise.resolve({
-        statusCode: 200,
-        body: {
-          balance: 0
-        }
-      })
+      return ok(balance)
     } catch (e) {
       return errorAdapter(e as Error)
     }
