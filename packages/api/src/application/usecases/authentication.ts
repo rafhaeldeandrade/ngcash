@@ -16,7 +16,11 @@ export class AuthenticationUseCase implements Authentication {
   async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
     const user = await this.userRepository.getUserByUsername(input.username)
     if (!user) throw new WrongCredentialsError()
-    await this.hashComparer.compare(input.password, user.password)
+    const passwordMatches = await this.hashComparer.compare(
+      input.password,
+      user.password
+    )
+    if (!passwordMatches) throw new WrongCredentialsError()
     return {
       accessToken: ''
     }
