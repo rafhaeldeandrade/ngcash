@@ -132,4 +132,16 @@ describe('AuthenticateController', () => {
       }
     })
   })
+
+  it('should return 200 with the correct values on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      body: {
+        accessToken: expect.any(String)
+      }
+    })
+  })
 })
