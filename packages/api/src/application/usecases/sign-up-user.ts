@@ -5,12 +5,13 @@ import {
   SignUpUserOutput
 } from '@/domain/usecases/sign-up-user'
 import { UserAlreadyExistsError } from '@/application/errors'
-import { Hasher } from '@/application/contracts'
+import { Encrypter, Hasher } from '@/application/contracts'
 
 export class SignUpUserUseCase implements SignUpUser {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly hasher: Hasher
+    private readonly hasher: Hasher,
+    private readonly encrypter: Encrypter
   ) {}
 
   async execute(input: SignUpUserInput): Promise<SignUpUserOutput> {
@@ -22,6 +23,7 @@ export class SignUpUserUseCase implements SignUpUser {
       username,
       password: hashedPassword
     })
+    await this.encrypter.encrypt(savedUser.id.toString())
     return {
       id: savedUser.id
     }
