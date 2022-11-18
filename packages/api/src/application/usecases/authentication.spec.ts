@@ -11,7 +11,7 @@ import {
 } from '@/domain/usecases/authentication'
 import { AuthenticationUseCase } from '@/application/usecases/authentication'
 import { WrongCredentialsError } from '../errors'
-import { HashComparer } from '@/application/contracts'
+import { Decrypter, Encrypter, HashComparer } from '@/application/contracts'
 
 function makeFakeUser(): User {
   return {
@@ -47,20 +47,37 @@ class HasherAdapterStub implements HashComparer {
   }
 }
 
+class DecrypterAdapterStub implements Decrypter {
+  async decrypt(value: string): Promise<any> {
+    return faker.datatype.uuid()
+  }
+
+  async isTokenExpired(token: string): Promise<boolean> {
+    return false
+  }
+}
+
 interface SutTypes {
   sut: Authentication
   userRepositoryStub: UserRepository
   hasherAdapterStub: HashComparer
+  decrypterAdapterStub: Decrypter
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const hasherAdapterStub = new HasherAdapterStub()
-  const sut = new AuthenticationUseCase(userRepositoryStub, hasherAdapterStub)
+  const decrypterAdapterStub = new DecrypterAdapterStub()
+  const sut = new AuthenticationUseCase(
+    userRepositoryStub,
+    hasherAdapterStub,
+    decrypterAdapterStub
+  )
   return {
     sut,
     userRepositoryStub,
-    hasherAdapterStub
+    hasherAdapterStub,
+    decrypterAdapterStub
   }
 }
 
@@ -127,5 +144,14 @@ describe('AuthenticationUseCase', () => {
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should call decrypter.isTokenExpired with the correct value', async () => {
+    const { sut, decrypterAdapterStub } = makeSut()
+    const isTokenExpiredSpy = jest.spyOn(decrypterAdapterStub, 'isTokenExpired')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(isTokenExpiredSpy).toHaveBeenCalledTimes(1)
+    expect(isTokenExpiredSpy).toHaveBeenCalledWith(fakeUser.accessToken)
   })
 })
