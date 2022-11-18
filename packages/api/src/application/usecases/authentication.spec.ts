@@ -224,4 +224,13 @@ describe('AuthenticationUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
   })
+
+  it('should return user.accessToken if user.accessToken is not expired', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const accessToken = await sut.execute(input)
+    expect(accessToken).toEqual({
+      accessToken: fakeUser.accessToken
+    })
+  })
 })
