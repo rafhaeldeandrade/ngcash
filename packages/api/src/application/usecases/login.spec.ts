@@ -5,13 +5,10 @@ import {
   SaveNewUserOutput,
   UserRepository
 } from '@/domain/repositories/user-repository'
-import {
-  Authentication,
-  AuthenticationInput
-} from '@/domain/usecases/authentication'
-import { AuthenticationUseCase } from '@/application/usecases/authentication'
+import { Login, LoginInput } from '@/domain/usecases/login'
+import { LoginUseCase } from '@/application/usecases/login'
 import { WrongCredentialsError } from '../errors'
-import { Decrypter, Encrypter, HashComparer } from '@/application/contracts'
+import { Encrypter, HashComparer } from '@/application/contracts'
 
 function makeFakeUser(): User {
   return {
@@ -54,7 +51,7 @@ class EncrypterAdapterStub implements Encrypter {
 }
 
 interface SutTypes {
-  sut: Authentication
+  sut: Login
   userRepositoryStub: UserRepository
   hasherAdapterStub: HashComparer
   encrypterAdapterStub: Encrypter
@@ -64,7 +61,7 @@ function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const hasherAdapterStub = new HasherAdapterStub()
   const encrypterAdapterStub = new EncrypterAdapterStub()
-  const sut = new AuthenticationUseCase(
+  const sut = new LoginUseCase(
     userRepositoryStub,
     hasherAdapterStub,
     encrypterAdapterStub
@@ -77,7 +74,7 @@ function makeSut(): SutTypes {
   }
 }
 
-function makeFakeInput(): AuthenticationInput {
+function makeFakeInput(): LoginInput {
   return {
     username: faker.internet.userName(),
     password: faker.internet.password()

@@ -1,20 +1,16 @@
 import { UserRepository } from '@/domain/repositories/user-repository'
-import {
-  Authentication,
-  AuthenticationInput,
-  AuthenticationOutput
-} from '@/domain/usecases/authentication'
+import { Login, LoginInput, LoginOutput } from '@/domain/usecases/login'
 import { WrongCredentialsError } from '@/application/errors'
 import { Encrypter, HashComparer } from '@/application/contracts'
 
-export class AuthenticationUseCase implements Authentication {
+export class LoginUseCase implements Login {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashComparer: HashComparer,
     private readonly encrypter: Encrypter
   ) {}
 
-  async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
+  async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.userRepository.getUserByUsername(input.username)
     if (!user) throw new WrongCredentialsError()
     const passwordMatches = await this.hashComparer.compare(

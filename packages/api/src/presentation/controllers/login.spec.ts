@@ -1,12 +1,8 @@
 import { faker } from '@faker-js/faker'
 
 import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
-import { AuthenticationController } from '@/presentation/controllers/authentication'
-import {
-  Authentication,
-  AuthenticationInput,
-  AuthenticationOutput
-} from '@/domain/usecases/authentication'
+import { LoginController } from '@/presentation/controllers/login'
+import { Login, LoginInput, LoginOutput } from '@/domain/usecases/login'
 import { WrongCredentialsError } from '@/application/errors'
 
 class SchemaValidateStub implements SchemaValidate {
@@ -15,8 +11,8 @@ class SchemaValidateStub implements SchemaValidate {
   }
 }
 
-class AuthenticationUseCaseStub implements Authentication {
-  async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
+class LoginUseCaseStub implements Login {
+  async execute(input: LoginInput): Promise<LoginOutput> {
     return {
       accessToken: faker.datatype.uuid()
     }
@@ -24,22 +20,19 @@ class AuthenticationUseCaseStub implements Authentication {
 }
 
 interface SutTypes {
-  sut: AuthenticationController
+  sut: LoginController
   schemaValidateStub: SchemaValidate
-  authenticationUseCaseStub: Authentication
+  loginUseCaseStub: Login
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const authenticationUseCaseStub = new AuthenticationUseCaseStub()
-  const sut = new AuthenticationController(
-    schemaValidateStub,
-    authenticationUseCaseStub
-  )
+  const loginUseCaseStub = new LoginUseCaseStub()
+  const sut = new LoginController(schemaValidateStub, loginUseCaseStub)
   return {
     sut,
     schemaValidateStub,
-    authenticationUseCaseStub
+    loginUseCaseStub
   }
 }
 
@@ -92,8 +85,8 @@ describe('AuthenticateController', () => {
   })
 
   it('should call authenticationUseCase.execute with the correct values', async () => {
-    const { sut, authenticationUseCaseStub } = makeSut()
-    const executeSpy = jest.spyOn(authenticationUseCaseStub, 'execute')
+    const { sut, loginUseCaseStub } = makeSut()
+    const executeSpy = jest.spyOn(loginUseCaseStub, 'execute')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
@@ -104,10 +97,10 @@ describe('AuthenticateController', () => {
   })
 
   it('should return 401 if authenticationUseCase.execute throws WrongCredentialsError', async () => {
-    const { sut, authenticationUseCaseStub } = makeSut()
+    const { sut, loginUseCaseStub } = makeSut()
     const httpRequest = makeFakeRequest()
     jest
-      .spyOn(authenticationUseCaseStub, 'execute')
+      .spyOn(loginUseCaseStub, 'execute')
       .mockRejectedValueOnce(new WrongCredentialsError())
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual({
@@ -119,10 +112,8 @@ describe('AuthenticateController', () => {
   })
 
   it('should return 500 if authenticationUseCase.execute throws any error but WrongCredentialsError', async () => {
-    const { sut, authenticationUseCaseStub } = makeSut()
-    jest
-      .spyOn(authenticationUseCaseStub, 'execute')
-      .mockRejectedValueOnce(new Error())
+    const { sut, loginUseCaseStub } = makeSut()
+    jest.spyOn(loginUseCaseStub, 'execute').mockRejectedValueOnce(new Error())
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual({

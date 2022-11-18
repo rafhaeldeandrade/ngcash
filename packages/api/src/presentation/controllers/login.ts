@@ -1,4 +1,4 @@
-import { Authentication } from '@/domain/usecases/authentication'
+import { Login } from '@/domain/usecases/login'
 import {
   Controller,
   HttpRequest,
@@ -8,17 +8,17 @@ import {
 import { badRequest, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '@/presentation/helpers/error-adapter'
 
-export class AuthenticationController implements Controller {
+export class LoginController implements Controller {
   constructor(
     private readonly schemaValidate: SchemaValidate,
-    private readonly authenticationUseCase: Authentication
+    private readonly loginUseCase: Login
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const error = await this.schemaValidate.validate(httpRequest.body)
       if (error) return badRequest(error)
-      const result = await this.authenticationUseCase.execute({
+      const result = await this.loginUseCase.execute({
         username: httpRequest.body.username,
         password: httpRequest.body.password
       })
