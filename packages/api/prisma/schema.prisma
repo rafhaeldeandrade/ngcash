@@ -22,6 +22,7 @@ model User {
   password     String        @db.VarChar(100)
   accountId    Int           @unique
   account      Account?      @relation(fields: [accountId], references: [id])
+  accessToken  String?       @db.VarChar(180)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
