@@ -30,3 +30,10 @@ export const created = (data: any): HttpResponse => ({
   statusCode: 201,
   body: data
 })
+
+export const unauthorized = () => ({
+  statusCode: 401,
+  body: {
+    message: 'Wrong credentials'
+  }
+})
