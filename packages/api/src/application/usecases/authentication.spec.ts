@@ -47,16 +47,6 @@ class HasherAdapterStub implements HashComparer {
   }
 }
 
-class DecrypterAdapterStub implements Decrypter {
-  async decrypt(value: string): Promise<any> {
-    return faker.datatype.uuid()
-  }
-
-  async isTokenExpired(token: string): Promise<boolean> {
-    return false
-  }
-}
-
 class EncrypterAdapterStub implements Encrypter {
   async encrypt(value: string): Promise<string> {
     return faker.datatype.uuid()
@@ -67,26 +57,22 @@ interface SutTypes {
   sut: Authentication
   userRepositoryStub: UserRepository
   hasherAdapterStub: HashComparer
-  decrypterAdapterStub: Decrypter
   encrypterAdapterStub: Encrypter
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const hasherAdapterStub = new HasherAdapterStub()
-  const decrypterAdapterStub = new DecrypterAdapterStub()
   const encrypterAdapterStub = new EncrypterAdapterStub()
   const sut = new AuthenticationUseCase(
     userRepositoryStub,
     hasherAdapterStub,
-    decrypterAdapterStub,
     encrypterAdapterStub
   )
   return {
     sut,
     userRepositoryStub,
     hasherAdapterStub,
-    decrypterAdapterStub,
     encrypterAdapterStub
   }
 }
@@ -158,20 +144,8 @@ describe('AuthenticationUseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('should call decrypter.isTokenExpired with the correct value', async () => {
-    const { sut, decrypterAdapterStub } = makeSut()
-    const isTokenExpiredSpy = jest.spyOn(decrypterAdapterStub, 'isTokenExpired')
-    const input = makeFakeInput()
-    await sut.execute(input)
-    expect(isTokenExpiredSpy).toHaveBeenCalledTimes(1)
-    expect(isTokenExpiredSpy).toHaveBeenCalledWith(fakeUser.accessToken)
-  })
-
-  it('should call encrypter.encrypt with the correct value when user.accessToken is expired', async () => {
-    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
-    jest
-      .spyOn(decrypterAdapterStub, 'isTokenExpired')
-      .mockResolvedValueOnce(true)
+  it('should call encrypter.encrypt with the correct value', async () => {
+    const { sut, encrypterAdapterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterAdapterStub, 'encrypt')
     const input = makeFakeInput()
     await sut.execute(input)
@@ -180,10 +154,7 @@ describe('AuthenticationUseCase', () => {
   })
 
   it('should throw if encrypter.encrypt throws', async () => {
-    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
-    jest
-      .spyOn(decrypterAdapterStub, 'isTokenExpired')
-      .mockResolvedValueOnce(true)
+    const { sut, encrypterAdapterStub } = makeSut()
     jest
       .spyOn(encrypterAdapterStub, 'encrypt')
       .mockRejectedValueOnce(new Error())
@@ -192,16 +163,8 @@ describe('AuthenticationUseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('should call userRepository.updateAccessToken with the correct values when user.accessToken is expired', async () => {
-    const {
-      sut,
-      decrypterAdapterStub,
-      encrypterAdapterStub,
-      userRepositoryStub
-    } = makeSut()
-    jest
-      .spyOn(decrypterAdapterStub, 'isTokenExpired')
-      .mockResolvedValueOnce(true)
+  it('should call userRepository.updateAccessToken with the correct values', async () => {
+    const { sut, encrypterAdapterStub, userRepositoryStub } = makeSut()
     const fakeToken = faker.datatype.uuid()
     jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
     const updateAccessTokenSpy = jest.spyOn(
@@ -215,10 +178,7 @@ describe('AuthenticationUseCase', () => {
   })
 
   it('should throw if userRepository.updateAccessToken throws', async () => {
-    const { sut, decrypterAdapterStub, userRepositoryStub } = makeSut()
-    jest
-      .spyOn(decrypterAdapterStub, 'isTokenExpired')
-      .mockResolvedValueOnce(true)
+    const { sut, userRepositoryStub } = makeSut()
     jest
       .spyOn(userRepositoryStub, 'updateAccessToken')
       .mockRejectedValueOnce(new Error())
@@ -227,20 +187,8 @@ describe('AuthenticationUseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('should return user.accessToken if user.accessToken is not expired', async () => {
-    const { sut } = makeSut()
-    const input = makeFakeInput()
-    const accessToken = await sut.execute(input)
-    expect(accessToken).toEqual({
-      accessToken: fakeUser.accessToken
-    })
-  })
-
-  it('should return the result of encrypter.encrypt if user.accessToken is expired', async () => {
-    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
-    jest
-      .spyOn(decrypterAdapterStub, 'isTokenExpired')
-      .mockResolvedValueOnce(true)
+  it('should return the result of encrypter.encrypt', async () => {
+    const { sut, encrypterAdapterStub } = makeSut()
     const fakeToken = faker.datatype.uuid()
     jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
     const input = makeFakeInput()
