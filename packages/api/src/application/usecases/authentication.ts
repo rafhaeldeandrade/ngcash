@@ -5,12 +5,13 @@ import {
   AuthenticationOutput
 } from '@/domain/usecases/authentication'
 import { WrongCredentialsError } from '@/application/errors'
-import { HashComparer } from '@/application/contracts'
+import { Decrypter, Encrypter, HashComparer } from '@/application/contracts'
 
 export class AuthenticationUseCase implements Authentication {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly hashComparer: HashComparer
+    private readonly hashComparer: HashComparer,
+    private readonly decrypter: Decrypter
   ) {}
 
   async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
@@ -21,6 +22,7 @@ export class AuthenticationUseCase implements Authentication {
       user.password
     )
     if (!passwordMatches) throw new WrongCredentialsError()
+    await this.decrypter.isTokenExpired(user.accessToken as string)
     return {
       accessToken: ''
     }
