@@ -15,7 +15,8 @@ function makeFakeUser(): User {
     id: faker.datatype.number(),
     username: faker.internet.userName(),
     password: faker.internet.password(),
-    accountId: faker.datatype.number()
+    accountId: faker.datatype.number(),
+    accessToken: null
   }
 }
 
@@ -26,6 +27,13 @@ class UserRepositoryStub implements UserRepository {
   }
 
   async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
+    return fakeUser
+  }
+
+  async updateAccessToken(
+    userId: number,
+    accessToken: string
+  ): Promise<User | null> {
     return fakeUser
   }
 }

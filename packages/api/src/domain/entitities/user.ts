@@ -5,4 +5,5 @@ export type User = {
   username: string
   password: string
   accountId: UniqueId
+  accessToken: string | null
 }

@@ -33,4 +33,18 @@ export default class PostgreSQLUserRepository implements UserRepository {
       }
     })
   }
+
+  async updateAccessToken(
+    userId: number,
+    accessToken: string
+  ): Promise<User | null> {
+    return await prismaHelper.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        accessToken
+      }
+    })
+  }
 }
