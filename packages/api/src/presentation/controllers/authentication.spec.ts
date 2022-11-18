@@ -117,4 +117,19 @@ describe('AuthenticateController', () => {
       }
     })
   })
+
+  it('should return 500 if authenticationUseCase.execute throws any error but WrongCredentialsError', async () => {
+    const { sut, authenticationUseCaseStub } = makeSut()
+    jest
+      .spyOn(authenticationUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
