@@ -29,6 +29,7 @@ export class AuthenticationUseCase implements Authentication {
     )
     if (isTokenExpired) {
       const newAccessToken = await this.encrypter.encrypt(user.id.toString())
+      await this.userRepository.updateAccessToken(user.id, newAccessToken)
       accessToken = newAccessToken
     }
     return {
