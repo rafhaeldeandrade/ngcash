@@ -165,6 +165,16 @@ describe('SignUpUserUseCase', () => {
     expect(encryptSpy).toHaveBeenCalledWith(fakeUser.id.toString())
   })
 
+  it('should throw if encrypter.encrypt throws', async () => {
+    const { sut, encrypterAdapterStub } = makeSut()
+    jest
+      .spyOn(encrypterAdapterStub, 'encrypt')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
+
   it('should return the correct value on success', async () => {
     const { sut } = makeSut()
     const input = makeFakeInput()
