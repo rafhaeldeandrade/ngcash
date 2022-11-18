@@ -211,4 +211,17 @@ describe('AuthenticationUseCase', () => {
     expect(updateAccessTokenSpy).toHaveBeenCalledTimes(1)
     expect(updateAccessTokenSpy).toHaveBeenCalledWith(fakeUser.id, fakeToken)
   })
+
+  it('should throw if userRepository.updateAccessToken throws', async () => {
+    const { sut, decrypterAdapterStub, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'isTokenExpired')
+      .mockResolvedValueOnce(true)
+    jest
+      .spyOn(userRepositoryStub, 'updateAccessToken')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
