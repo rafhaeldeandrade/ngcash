@@ -4,7 +4,7 @@ import { SignUpUser, SignUpUserInput } from '@/domain/usecases/sign-up-user'
 import { faker } from '@faker-js/faker'
 import { UserAlreadyExistsError } from '@/application/errors'
 import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
-import { Hasher } from '@/application/contracts'
+import { Encrypter, Hasher } from '@/application/contracts'
 import {
   SaveNewUserInput,
   SaveNewUserOutput
@@ -19,14 +19,14 @@ function makeFakeUser(): User {
   }
 }
 
-const fakeuser = makeFakeUser()
+const fakeUser = makeFakeUser()
 class UserRepositoryStub implements UserRepository {
   async getUserByUsername(username: string): Promise<User | null> {
     return null
   }
 
   async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
-    return fakeuser
+    return fakeUser
   }
 }
 
@@ -37,20 +37,33 @@ class HasherAdapterStub implements Hasher {
   }
 }
 
+class EncrypterAdapterStub implements Encrypter {
+  async encrypt(value: string): Promise<string> {
+    return faker.datatype.uuid()
+  }
+}
+
 interface SutTypes {
   sut: SignUpUser
   userRepositoryStub: UserRepository
   hasherAdapterStub: Hasher
+  encrypterAdapterStub: Encrypter
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const hasherAdapterStub = new HasherAdapterStub()
-  const sut = new SignUpUserUseCase(userRepositoryStub, hasherAdapterStub)
+  const encrypterAdapterStub = new EncrypterAdapterStub()
+  const sut = new SignUpUserUseCase(
+    userRepositoryStub,
+    hasherAdapterStub,
+    encrypterAdapterStub
+  )
   return {
     sut,
     userRepositoryStub,
-    hasherAdapterStub
+    hasherAdapterStub,
+    encrypterAdapterStub
   }
 }
 
@@ -135,12 +148,21 @@ describe('SignUpUserUseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  it('should call encrypter.encrypt with the correct value', async () => {
+    const { sut, encrypterAdapterStub } = makeSut()
+    const encryptSpy = jest.spyOn(encrypterAdapterStub, 'encrypt')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(encryptSpy).toHaveBeenCalledTimes(1)
+    expect(encryptSpy).toHaveBeenCalledWith(fakeUser.id.toString())
+  })
+
   it('should return the correct value on success', async () => {
     const { sut } = makeSut()
     const input = makeFakeInput()
     const result = await sut.execute(input)
     expect(result).toEqual({
-      id: fakeuser.id
+      id: fakeUser.id
     })
   })
 })
