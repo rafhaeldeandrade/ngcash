@@ -189,4 +189,26 @@ describe('AuthenticationUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
   })
+
+  it('should call userRepository.updateAccessToken with the correct values when user.accessToken is expired', async () => {
+    const {
+      sut,
+      decrypterAdapterStub,
+      encrypterAdapterStub,
+      userRepositoryStub
+    } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'isTokenExpired')
+      .mockResolvedValueOnce(true)
+    const fakeToken = faker.datatype.uuid()
+    jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
+    const updateAccessTokenSpy = jest.spyOn(
+      userRepositoryStub,
+      'updateAccessToken'
+    )
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(updateAccessTokenSpy).toHaveBeenCalledTimes(1)
+    expect(updateAccessTokenSpy).toHaveBeenCalledWith(fakeUser.id, fakeToken)
+  })
 })
