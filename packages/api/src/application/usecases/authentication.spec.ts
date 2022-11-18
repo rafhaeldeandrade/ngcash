@@ -57,27 +57,37 @@ class DecrypterAdapterStub implements Decrypter {
   }
 }
 
+class EncrypterAdapterStub implements Encrypter {
+  async encrypt(value: string): Promise<string> {
+    return faker.datatype.uuid()
+  }
+}
+
 interface SutTypes {
   sut: Authentication
   userRepositoryStub: UserRepository
   hasherAdapterStub: HashComparer
   decrypterAdapterStub: Decrypter
+  encrypterAdapterStub: Encrypter
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const hasherAdapterStub = new HasherAdapterStub()
   const decrypterAdapterStub = new DecrypterAdapterStub()
+  const encrypterAdapterStub = new EncrypterAdapterStub()
   const sut = new AuthenticationUseCase(
     userRepositoryStub,
     hasherAdapterStub,
-    decrypterAdapterStub
+    decrypterAdapterStub,
+    encrypterAdapterStub
   )
   return {
     sut,
     userRepositoryStub,
     hasherAdapterStub,
-    decrypterAdapterStub
+    decrypterAdapterStub,
+    encrypterAdapterStub
   }
 }
 
@@ -153,5 +163,30 @@ describe('AuthenticationUseCase', () => {
     await sut.execute(input)
     expect(isTokenExpiredSpy).toHaveBeenCalledTimes(1)
     expect(isTokenExpiredSpy).toHaveBeenCalledWith(fakeUser.accessToken)
+  })
+
+  it('should call encrypter.encrypt with the correct value when user.accessToken is expired', async () => {
+    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'isTokenExpired')
+      .mockResolvedValueOnce(true)
+    const encryptSpy = jest.spyOn(encrypterAdapterStub, 'encrypt')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(encryptSpy).toHaveBeenCalledTimes(1)
+    expect(encryptSpy).toHaveBeenCalledWith(fakeUser.id.toString())
+  })
+
+  it('should throw if encrypter.encrypt throws', async () => {
+    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'isTokenExpired')
+      .mockResolvedValueOnce(true)
+    jest
+      .spyOn(encrypterAdapterStub, 'encrypt')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
   })
 })
