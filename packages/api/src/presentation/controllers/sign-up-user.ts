@@ -24,7 +24,6 @@ export class SignUpUserController implements Controller {
       })
       return created(result)
     } catch (e) {
-      console.log(e)
       return errorAdapter(e as Error)
     }
   }
