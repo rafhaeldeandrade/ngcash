@@ -175,12 +175,29 @@ describe('SignUpUserUseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  it('should call userRepository.updateAccessToken with the correct values', async () => {
+    const { sut, encrypterAdapterStub, userRepositoryStub } = makeSut()
+    const fakeToken = faker.datatype.uuid()
+    jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
+    const updateAccessTokenSpy = jest.spyOn(
+      userRepositoryStub,
+      'updateAccessToken'
+    )
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(updateAccessTokenSpy).toHaveBeenCalledTimes(1)
+    expect(updateAccessTokenSpy).toHaveBeenCalledWith(fakeUser.id, fakeToken)
+  })
+
   it('should return the correct value on success', async () => {
-    const { sut } = makeSut()
+    const { sut, encrypterAdapterStub } = makeSut()
+    const fakeToken = faker.datatype.uuid()
+    jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
     const input = makeFakeInput()
     const result = await sut.execute(input)
     expect(result).toEqual({
-      id: fakeUser.id
+      id: fakeUser.id,
+      accessToken: fakeToken
     })
   })
 })
