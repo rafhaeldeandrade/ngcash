@@ -1,8 +1,8 @@
 export type HttpRequest = {
   body?: any
   user?: {
-    id: string
-    accountId: string
+    id: number
+    accountId: number
   }
 }
 
