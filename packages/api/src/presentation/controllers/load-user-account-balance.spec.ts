@@ -8,6 +8,7 @@ import {
   LoadUserAccountBalanceInput,
   LoadUserAccountBalanceOutput
 } from '@/domain/usecases/load-user-account-balance'
+import { AccountNotFoundError } from '@/application/errors'
 
 class LoadUserAccountBalanceUseCaseStub implements LoadUserAccountBalance {
   async execute(
@@ -95,5 +96,22 @@ describe('LoadUserAccountBalanceController', () => {
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
     expect(executeSpy).toHaveBeenCalledWith(httpRequest.user?.accountId)
+  })
+
+  it('should return 404 if loadUserAccountBalanceUseCase.execute throws AccountNotFoundError', async () => {
+    const { sut, loadUserAccountBalanceUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(loadUserAccountBalanceUseCaseStub, 'execute')
+      .mockRejectedValueOnce(
+        new AccountNotFoundError(httpRequest.user?.accountId as number)
+      )
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 404,
+      body: {
+        message: `Account ${httpRequest.user?.accountId} not found`
+      }
+    })
   })
 })
