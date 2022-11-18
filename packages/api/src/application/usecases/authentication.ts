@@ -5,13 +5,12 @@ import {
   AuthenticationOutput
 } from '@/domain/usecases/authentication'
 import { WrongCredentialsError } from '@/application/errors'
-import { Decrypter, Encrypter, HashComparer } from '@/application/contracts'
+import { Encrypter, HashComparer } from '@/application/contracts'
 
 export class AuthenticationUseCase implements Authentication {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashComparer: HashComparer,
-    private readonly decrypter: Decrypter,
     private readonly encrypter: Encrypter
   ) {}
 
@@ -23,17 +22,10 @@ export class AuthenticationUseCase implements Authentication {
       user.password
     )
     if (!passwordMatches) throw new WrongCredentialsError()
-    let accessToken = user.accessToken as string
-    const isTokenExpired = await this.decrypter.isTokenExpired(
-      user.accessToken as string
-    )
-    if (isTokenExpired) {
-      const newAccessToken = await this.encrypter.encrypt(user.id.toString())
-      await this.userRepository.updateAccessToken(user.id, newAccessToken)
-      accessToken = newAccessToken
-    }
+    const newAccessToken = await this.encrypter.encrypt(user.id.toString())
+    await this.userRepository.updateAccessToken(user.id, newAccessToken)
     return {
-      accessToken
+      accessToken: newAccessToken
     }
   }
 }
