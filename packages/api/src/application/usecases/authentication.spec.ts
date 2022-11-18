@@ -10,6 +10,7 @@ import {
   AuthenticationInput
 } from '@/domain/usecases/authentication'
 import { AuthenticationUseCase } from '@/application/usecases/authentication'
+import { WrongCredentialsError } from '../errors'
 
 function makeFakeUser(): User {
   return {
@@ -71,5 +72,15 @@ describe('AuthenticationUseCase', () => {
     await sut.execute(input)
     expect(getUserByUsernameSpy).toHaveBeenCalledTimes(1)
     expect(getUserByUsernameSpy).toHaveBeenCalledWith(input.username)
+  })
+
+  it('should throw WrongCredentials if UserRepository.getUserByUsername returns null', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .mockResolvedValueOnce(null)
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new WrongCredentialsError())
   })
 })
