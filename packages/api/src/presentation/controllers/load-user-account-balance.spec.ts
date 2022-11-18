@@ -114,4 +114,19 @@ describe('LoadUserAccountBalanceController', () => {
       }
     })
   })
+
+  it('should return 500 if loadUserAccountBalanceUseCase.execute throws any error but AccountNotFoundError', async () => {
+    const { sut, loadUserAccountBalanceUseCaseStub } = makeSut()
+    jest
+      .spyOn(loadUserAccountBalanceUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
