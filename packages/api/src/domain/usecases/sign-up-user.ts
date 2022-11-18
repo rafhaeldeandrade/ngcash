@@ -7,6 +7,7 @@ export type SignUpUserInput = {
 
 export type SignUpUserOutput = {
   id: UniqueId
+  accessToken: string
 }
 
 export interface SignUpUser {

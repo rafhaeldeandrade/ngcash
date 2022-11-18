@@ -23,9 +23,11 @@ export class SignUpUserUseCase implements SignUpUser {
       username,
       password: hashedPassword
     })
-    await this.encrypter.encrypt(savedUser.id.toString())
+    const accessToken = await this.encrypter.encrypt(savedUser.id.toString())
+    await this.userRepository.updateAccessToken(savedUser.id, accessToken)
     return {
-      id: savedUser.id
+      id: savedUser.id,
+      accessToken
     }
   }
 }
