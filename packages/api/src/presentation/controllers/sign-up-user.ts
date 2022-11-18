@@ -6,7 +6,7 @@ import {
   SchemaValidate
 } from '@/presentation/contracts'
 import { badRequest, created } from '@/presentation/helpers/http-helper'
-import { errorAdapter } from '../helpers/error-adapter'
+import { errorAdapter } from '@/presentation/helpers/error-adapter'
 
 export class SignUpUserController implements Controller {
   constructor(
