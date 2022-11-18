@@ -10,12 +10,13 @@ import {
 } from '@/domain/usecases/load-user-account-balance'
 import { AccountNotFoundError } from '@/application/errors'
 
+const fakeBalance = faker.datatype.number()
 class LoadUserAccountBalanceUseCaseStub implements LoadUserAccountBalance {
   async execute(
     input: LoadUserAccountBalanceInput
   ): Promise<LoadUserAccountBalanceOutput> {
     return {
-      balance: 0
+      balance: fakeBalance
     }
   }
 }
@@ -126,6 +127,18 @@ describe('LoadUserAccountBalanceController', () => {
       statusCode: 500,
       body: {
         message: 'Internal server error'
+      }
+    })
+  })
+
+  it('should return 200 with the correct values on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      body: {
+        balance: fakeBalance
       }
     })
   })
