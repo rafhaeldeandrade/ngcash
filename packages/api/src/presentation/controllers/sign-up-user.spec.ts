@@ -120,6 +120,21 @@ describe('SignUpUser Controller', () => {
     })
   })
 
+  it('should return 500 if signUpUserUseCase.execute throws any error but UserAlreadyExistsError', async () => {
+    const { sut, signUpUserUseCaseStub } = makeSut()
+    jest
+      .spyOn(signUpUserUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
+
   it('should return 201 with the correct values on success', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeRequest()
