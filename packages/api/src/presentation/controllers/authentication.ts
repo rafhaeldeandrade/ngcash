@@ -5,10 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import {
-  badRequest,
-  internalServerError
-} from '@/presentation/helpers/http-helper'
+import { badRequest } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '../helpers/error-adapter'
 
 export class AuthenticationController implements Controller {
