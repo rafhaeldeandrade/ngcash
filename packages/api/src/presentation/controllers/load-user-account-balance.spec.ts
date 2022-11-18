@@ -3,26 +3,48 @@ import { faker } from '@faker-js/faker'
 import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
 import { LoadUserAccountBalanceController } from '@/presentation/controllers/load-user-account-balance'
 import { SchemaValidateStub } from '@/utils/test-stubs'
+import {
+  LoadUserAccountBalance,
+  LoadUserAccountBalanceInput,
+  LoadUserAccountBalanceOutput
+} from '@/domain/usecases/load-user-account-balance'
+
+class LoadUserAccountBalanceUseCaseStub implements LoadUserAccountBalance {
+  async execute(
+    input: LoadUserAccountBalanceInput
+  ): Promise<LoadUserAccountBalanceOutput> {
+    return {
+      balance: 0
+    }
+  }
+}
 
 interface SutTypes {
   sut: LoadUserAccountBalanceController
   schemaValidateStub: SchemaValidate
+  loadUserAccountBalanceUseCaseStub: LoadUserAccountBalance
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const sut = new LoadUserAccountBalanceController(schemaValidateStub)
+  const loadUserAccountBalanceUseCaseStub =
+    new LoadUserAccountBalanceUseCaseStub()
+  const sut = new LoadUserAccountBalanceController(
+    schemaValidateStub,
+    loadUserAccountBalanceUseCaseStub
+  )
   return {
     sut,
-    schemaValidateStub
+    schemaValidateStub,
+    loadUserAccountBalanceUseCaseStub
   }
 }
 
 function makeFakeRequest(): HttpRequest {
   return {
     user: {
-      id: faker.datatype.uuid(),
-      accountId: faker.datatype.uuid()
+      id: faker.datatype.number(),
+      accountId: faker.datatype.number()
     }
   }
 }
@@ -64,5 +86,14 @@ describe('LoadUserAccountBalanceController', () => {
         message: 'Internal server error'
       }
     })
+  })
+
+  it('should call loadUserAccountBalanceUseCase.execute with the correct values', async () => {
+    const { sut, loadUserAccountBalanceUseCaseStub } = makeSut()
+    const executeSpy = jest.spyOn(loadUserAccountBalanceUseCaseStub, 'execute')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.user?.accountId)
   })
 })
