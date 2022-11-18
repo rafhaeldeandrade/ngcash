@@ -120,4 +120,12 @@ describe('AuthenticationUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new WrongCredentialsError())
   })
+
+  it('should throw if hashComparer.compare throws', async () => {
+    const { sut, hasherAdapterStub } = makeSut()
+    jest.spyOn(hasherAdapterStub, 'compare').mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
