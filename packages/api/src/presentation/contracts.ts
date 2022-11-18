@@ -1,5 +1,9 @@
 export type HttpRequest = {
   body?: any
+  user?: {
+    id: string
+    accountId: string
+  }
 }
 
 export type HttpResponse = {
