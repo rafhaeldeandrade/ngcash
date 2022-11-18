@@ -11,6 +11,7 @@ import {
 } from '@/domain/usecases/authentication'
 import { AuthenticationUseCase } from '@/application/usecases/authentication'
 import { WrongCredentialsError } from '../errors'
+import { HashComparer } from '@/application/contracts'
 
 function makeFakeUser(): User {
   return {
@@ -40,17 +41,26 @@ class UserRepositoryStub implements UserRepository {
   }
 }
 
+class HasherAdapterStub implements HashComparer {
+  async compare(value: string, hash: string): Promise<boolean> {
+    return true
+  }
+}
+
 interface SutTypes {
   sut: Authentication
   userRepositoryStub: UserRepository
+  hasherAdapterStub: HashComparer
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
-  const sut = new AuthenticationUseCase(userRepositoryStub)
+  const hasherAdapterStub = new HasherAdapterStub()
+  const sut = new AuthenticationUseCase(userRepositoryStub, hasherAdapterStub)
   return {
     sut,
-    userRepositoryStub
+    userRepositoryStub,
+    hasherAdapterStub
   }
 }
 
@@ -92,5 +102,14 @@ describe('AuthenticationUseCase', () => {
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should call hashComparer.compare with the correct values', async () => {
+    const { sut, hasherAdapterStub } = makeSut()
+    const compareSpy = jest.spyOn(hasherAdapterStub, 'compare')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(compareSpy).toHaveBeenCalledTimes(1)
+    expect(compareSpy).toHaveBeenCalledWith(input.password, fakeUser.password)
   })
 })
