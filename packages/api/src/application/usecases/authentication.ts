@@ -11,7 +11,8 @@ export class AuthenticationUseCase implements Authentication {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashComparer: HashComparer,
-    private readonly decrypter: Decrypter
+    private readonly decrypter: Decrypter,
+    private readonly encrypter: Encrypter
   ) {}
 
   async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
@@ -22,9 +23,16 @@ export class AuthenticationUseCase implements Authentication {
       user.password
     )
     if (!passwordMatches) throw new WrongCredentialsError()
-    await this.decrypter.isTokenExpired(user.accessToken as string)
+    let accessToken = user.accessToken as string
+    const isTokenExpired = await this.decrypter.isTokenExpired(
+      user.accessToken as string
+    )
+    if (isTokenExpired) {
+      const newAccessToken = await this.encrypter.encrypt(user.id.toString())
+      accessToken = newAccessToken
+    }
     return {
-      accessToken: ''
+      accessToken
     }
   }
 }
