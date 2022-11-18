@@ -37,3 +37,10 @@ export const unauthorized = () => ({
     message: 'Wrong credentials'
   }
 })
+
+export const notFound = (error: Error): HttpResponse => ({
+  statusCode: 404,
+  body: {
+    message: error.message
+  }
+})

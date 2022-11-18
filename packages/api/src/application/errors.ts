@@ -11,3 +11,10 @@ export class WrongCredentialsError extends Error {
     this.name = 'WrongCredentialsError'
   }
 }
+
+export class AccountNotFoundError extends Error {
+  constructor(accountId: string | number) {
+    super(`Account ${accountId} not found`)
+    this.name = 'AccountNotFoundError'
+  }
+}
