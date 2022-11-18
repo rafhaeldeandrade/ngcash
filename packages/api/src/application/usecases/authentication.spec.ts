@@ -83,4 +83,14 @@ describe('AuthenticationUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new WrongCredentialsError())
   })
+
+  it('should throw if userRepository.getUserByUsername throws', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
