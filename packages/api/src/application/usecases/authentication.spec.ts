@@ -112,4 +112,12 @@ describe('AuthenticationUseCase', () => {
     expect(compareSpy).toHaveBeenCalledTimes(1)
     expect(compareSpy).toHaveBeenCalledWith(input.password, fakeUser.password)
   })
+
+  it('should throw WrongCredentials if hashComparer.compare returns false', async () => {
+    const { sut, hasherAdapterStub } = makeSut()
+    jest.spyOn(hasherAdapterStub, 'compare').mockResolvedValueOnce(false)
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new WrongCredentialsError())
+  })
 })
