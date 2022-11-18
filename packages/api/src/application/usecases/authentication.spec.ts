@@ -99,6 +99,8 @@ function makeFakeInput(): AuthenticationInput {
 }
 
 describe('AuthenticationUseCase', () => {
+  afterEach(() => jest.restoreAllMocks())
+
   it('should call userRepository.getUserByUsername with the correct value', async () => {
     const { sut, userRepositoryStub } = makeSut()
     const getUserByUsernameSpy = jest.spyOn(
@@ -231,6 +233,20 @@ describe('AuthenticationUseCase', () => {
     const accessToken = await sut.execute(input)
     expect(accessToken).toEqual({
       accessToken: fakeUser.accessToken
+    })
+  })
+
+  it('should return the result of encrypter.encrypt if user.accessToken is expired', async () => {
+    const { sut, decrypterAdapterStub, encrypterAdapterStub } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'isTokenExpired')
+      .mockResolvedValueOnce(true)
+    const fakeToken = faker.datatype.uuid()
+    jest.spyOn(encrypterAdapterStub, 'encrypt').mockResolvedValueOnce(fakeToken)
+    const input = makeFakeInput()
+    const accessToken = await sut.execute(input)
+    expect(accessToken).toEqual({
+      accessToken: fakeToken
     })
   })
 })
