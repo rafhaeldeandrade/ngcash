@@ -10,7 +10,7 @@
     "migrate:postgresql:dev": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init",
     "migrate:postgresql:prod": "dotenv -e .env.production -- npx prisma migrate dev --name postgres-init",
     "test": "jest --passWithNoTests --silent --noStackTrace",
-    "test:unit": "npm test -- -c jest.config.unit --watch --maxWorkers=25%",
+    "test:unit": "npm test -- -c jest.config.unit.ts --watch --maxWorkers=25%",
     "test:integration": "npm test -- -c jest.config.integration.ts --watch --maxWorkers=25%",
     "test:precommit": "npm test -- -c jest.config.ts --maxWorkers=25% --findRelatedTests",
     "test:prepush": "npm test -- -c jest.config.ts --coverage --maxWorkers=25%",
