@@ -5,7 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import { badRequest, ok } from '@/presentation/helpers/http-helper'
+import { badRequest, created, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '../helpers/error-adapter'
 
 export class SignUpUserController implements Controller {
@@ -22,8 +22,9 @@ export class SignUpUserController implements Controller {
         username: httpRequest.body.username,
         password: httpRequest.body.password
       })
-      return ok(result)
+      return created(result)
     } catch (e) {
+      console.log(e)
       return errorAdapter(e as Error)
     }
   }
