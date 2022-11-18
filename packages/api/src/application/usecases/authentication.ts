@@ -4,12 +4,14 @@ import {
   AuthenticationInput,
   AuthenticationOutput
 } from '@/domain/usecases/authentication'
+import { WrongCredentialsError } from '@/application/errors'
 
 export class AuthenticationUseCase implements Authentication {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
-    await this.userRepository.getUserByUsername(input.username)
+    const user = await this.userRepository.getUserByUsername(input.username)
+    if (!user) throw new WrongCredentialsError()
     return {
       accessToken: ''
     }
