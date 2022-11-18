@@ -36,4 +36,18 @@ describe('LoadUserAccountBalanceController', () => {
     expect(validateSpy).toHaveBeenCalledTimes(1)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.user)
   })
+
+  it('should return 400 if schemaValidate.validate returns an error', async () => {
+    const error = new Error(faker.git.commitMessage())
+    const { sut, schemaValidateStub } = makeSut()
+    jest.spyOn(schemaValidateStub, 'validate').mockResolvedValueOnce(error)
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: {
+        message: error.message
+      }
+    })
+  })
 })
