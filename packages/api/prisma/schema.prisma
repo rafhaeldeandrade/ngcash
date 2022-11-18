@@ -19,7 +19,7 @@ model Account {
 model User {
   id           Int           @id @default(autoincrement())
   username     String        @unique @db.VarChar(25)
-  password     String        @db.VarChar(80)
+  password     String        @db.VarChar(100)
   accountId    Int           @unique
   account      Account?      @relation(fields: [accountId], references: [id])
   createdAt    DateTime      @default(now())
