@@ -2,6 +2,11 @@ import { faker } from '@faker-js/faker'
 
 import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
 import { AuthenticationController } from '@/presentation/controllers/authentication'
+import {
+  Authentication,
+  AuthenticationInput,
+  AuthenticationOutput
+} from '@/domain/usecases/authentication'
 
 class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | void> {
@@ -9,17 +14,31 @@ class SchemaValidateStub implements SchemaValidate {
   }
 }
 
+class AuthenticationUseCaseStub implements Authentication {
+  async execute(input: AuthenticationInput): Promise<AuthenticationOutput> {
+    return {
+      accessToken: faker.datatype.uuid()
+    }
+  }
+}
+
 interface SutTypes {
   sut: AuthenticationController
   schemaValidateStub: SchemaValidate
+  authenticationUseCaseStub: Authentication
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const sut = new AuthenticationController(schemaValidateStub)
+  const authenticationUseCaseStub = new AuthenticationUseCaseStub()
+  const sut = new AuthenticationController(
+    schemaValidateStub,
+    authenticationUseCaseStub
+  )
   return {
     sut,
-    schemaValidateStub
+    schemaValidateStub,
+    authenticationUseCaseStub
   }
 }
 
@@ -68,6 +87,18 @@ describe('AuthenticateController', () => {
       body: {
         message: 'Internal server error'
       }
+    })
+  })
+
+  it('should call authenticationUseCase.execute with the correct values', async () => {
+    const { sut, authenticationUseCaseStub } = makeSut()
+    const executeSpy = jest.spyOn(authenticationUseCaseStub, 'execute')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+    expect(executeSpy).toHaveBeenCalledWith({
+      username: httpRequest.body.username,
+      password: httpRequest.body.password
     })
   })
 })
