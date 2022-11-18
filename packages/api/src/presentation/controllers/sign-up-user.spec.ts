@@ -119,12 +119,12 @@ describe('SignUpUser Controller', () => {
     })
   })
 
-  it('should return 200 with the correct values on success', async () => {
+  it('should return 201 with the correct values on success', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual({
-      statusCode: 200,
+      statusCode: 201,
       body: {
         id: expect.any(Number)
       }
