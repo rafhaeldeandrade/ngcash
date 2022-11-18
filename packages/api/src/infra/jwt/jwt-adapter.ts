@@ -5,12 +5,13 @@ export class JWTAdapter implements Encrypter {
   constructor(private readonly secret: string) {}
 
   async encrypt(value: string): Promise<string> {
+    const oneDay = 60 * 60 * 24
     return await new Promise((resolve, reject) => {
       jwt.sign(
-        value,
+        { id: value },
         this.secret,
         {
-          expiresIn: '1d'
+          expiresIn: oneDay
         },
         (err: Error | null, encoded: string | undefined) => {
           if (err) reject(err)
