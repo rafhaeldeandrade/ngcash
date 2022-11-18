@@ -7,6 +7,7 @@ import {
   AuthenticationInput,
   AuthenticationOutput
 } from '@/domain/usecases/authentication'
+import { WrongCredentialsError } from '@/application/errors'
 
 class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | void> {
@@ -99,6 +100,21 @@ describe('AuthenticateController', () => {
     expect(executeSpy).toHaveBeenCalledWith({
       username: httpRequest.body.username,
       password: httpRequest.body.password
+    })
+  })
+
+  it('should return 401 if authenticationUseCase.execute throws WrongCredentialsError', async () => {
+    const { sut, authenticationUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(authenticationUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new WrongCredentialsError())
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 401,
+      body: {
+        message: 'Wrong credentials'
+      }
     })
   })
 })
