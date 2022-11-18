@@ -6,5 +6,6 @@ export default {
     memoryCost: 37888,
     parallelism: 1,
     timeCost: 2
-  }
+  },
+  jwtSecret: process.env.JWT_SECRET || 'MelhorSetarNoDotEnv'
 }

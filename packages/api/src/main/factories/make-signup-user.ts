@@ -7,6 +7,7 @@ import { ZodSchemaValidate } from '@/presentation/helpers/zod-schema-validate'
 import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
 import PostgreSQLUserRepository from '@/infra/postgresql/user-repository'
 import { Argon2Adapter } from '@/infra/argon2/argon2-adapter'
+import { JWTAdapter } from '@/infra/jwt/jwt-adapter'
 
 export function makeSignUpUserController(): Controller {
   const zodSchema = z.object({
@@ -22,9 +23,11 @@ export function makeSignUpUserController(): Controller {
   const zodSchemaValidate = new ZodSchemaValidate(zodSchema)
   const postgreSQLUserRepository = new PostgreSQLUserRepository()
   const argon2Hasher = new Argon2Adapter(env.argon2Options)
+  const jwtEncrypter = new JWTAdapter(env.jwtSecret)
   const signUpUserUseCase = new SignUpUserUseCase(
     postgreSQLUserRepository,
-    argon2Hasher
+    argon2Hasher,
+    jwtEncrypter
   )
   return new SignUpUserController(zodSchemaValidate, signUpUserUseCase)
 }
