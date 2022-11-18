@@ -6,9 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "tsnd --respawn -r tsconfig-paths/register src/main/server.ts",
-    "migrate:postgresql:test": "dotenv -e .env.test -- npx prisma migrate dev --name postgres-init",
-    "migrate:postgresql:dev": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init",
-    "migrate:postgresql:prod": "dotenv -e .env.production -- npx prisma migrate dev --name postgres-init",
+    "migrate:postgresql:test": "dotenv -e .env.test -- npx prisma migrate dev --name postgres-test",
+    "migrate:postgresql:dev": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-dev",
+    "migrate:postgresql:prod": "dotenv -e .env.production -- npx prisma migrate dev --name postgres-prod",
     "test": "jest --passWithNoTests --silent --noStackTrace",
     "test:unit": "npm test -- -c jest.config.unit.ts --watch --maxWorkers=25%",
     "test:integration": "npm test -- -c jest.config.integration.ts --watch --maxWorkers=25%",
