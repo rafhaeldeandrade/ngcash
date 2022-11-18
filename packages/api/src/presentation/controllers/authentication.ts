@@ -5,8 +5,8 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import { badRequest } from '@/presentation/helpers/http-helper'
-import { errorAdapter } from '../helpers/error-adapter'
+import { badRequest, ok } from '@/presentation/helpers/http-helper'
+import { errorAdapter } from '@/presentation/helpers/error-adapter'
 
 export class AuthenticationController implements Controller {
   constructor(
@@ -18,14 +18,11 @@ export class AuthenticationController implements Controller {
     try {
       const error = await this.schemaValidate.validate(httpRequest.body)
       if (error) return badRequest(error)
-      await this.authenticationUseCase.execute({
+      const result = await this.authenticationUseCase.execute({
         username: httpRequest.body.username,
         password: httpRequest.body.password
       })
-      return {
-        statusCode: 200,
-        body: 'ok'
-      }
+      return ok(result)
     } catch (e) {
       return errorAdapter(e as Error)
     }
