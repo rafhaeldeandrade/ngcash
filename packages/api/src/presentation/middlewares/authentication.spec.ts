@@ -107,4 +107,19 @@ describe('AuthenticationMiddleware', () => {
       }
     })
   })
+
+  it('should return 500 if loadUserUseCase.execute throws any error but UserNotFoundError', async () => {
+    const { sut, loadUserUseCaseStub } = makeSut()
+    jest
+      .spyOn(loadUserUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
