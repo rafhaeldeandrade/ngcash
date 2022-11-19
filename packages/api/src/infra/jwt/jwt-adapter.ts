@@ -22,11 +22,11 @@ export class JWTAdapter implements Encrypter, Decrypter {
     })
   }
 
-  async isTokenValid(token: string): Promise<boolean> {
+  async decrypt(token: string): Promise<string | null> {
     return await new Promise((resolve, reject) => {
-      jwt.verify(token, this.secret, (err: Error | null, _decoded: any) => {
-        if (err) reject(err)
-        resolve(true)
+      jwt.verify(token, this.secret, (err: Error | null, decoded: any) => {
+        if (err) reject(null)
+        resolve(decoded.id)
       })
     })
   }

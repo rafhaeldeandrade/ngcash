@@ -11,5 +11,5 @@ export interface Encrypter {
 }
 
 export interface Decrypter {
-  isTokenValid: (token: string) => Promise<boolean>
+  decrypt: (value: string) => Promise<string | null>
 }

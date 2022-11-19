@@ -32,3 +32,10 @@ export class UserNotAuthorizedError extends Error {
     this.name = 'UserNotAuthorizedError'
   }
 }
+
+export class InvalidTokenError extends Error {
+  constructor() {
+    super('Invalid or expired token, try logging in again')
+    this.name = 'InvalidTokenError'
+  }
+}

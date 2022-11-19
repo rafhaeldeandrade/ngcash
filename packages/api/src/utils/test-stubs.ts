@@ -19,7 +19,7 @@ export function makeFakeUser(): User {
     username: faker.internet.userName(),
     password: faker.internet.password(),
     accountId: faker.datatype.number(),
-    accessToken: null
+    accessToken: faker.datatype.uuid()
   }
 }
 

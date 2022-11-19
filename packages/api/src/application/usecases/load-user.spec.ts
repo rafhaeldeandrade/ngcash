@@ -3,12 +3,17 @@ import { LoadUserUseCase } from '@/application/usecases/load-user'
 import { UserRepositoryStub, fakeUser } from '@/utils/test-stubs'
 import { UserRepository } from '@/domain/repositories/user-repository'
 import { faker } from '@faker-js/faker'
-import { UserNotFoundError } from '../errors'
-import { Decrypter } from '../contracts'
+import {
+  InvalidTokenError,
+  UserNotAuthorizedError,
+  UserNotFoundError,
+  WrongCredentialsError
+} from '@/application/errors'
+import { Decrypter } from '@/application/contracts'
 
 class DecrypterAdapterStub implements Decrypter {
-  async isTokenValid(token: string): Promise<boolean> {
-    return true
+  async decrypt(value: string): Promise<string> {
+    return fakeUser.accessToken as string
   }
 }
 
@@ -26,16 +31,34 @@ function makeSut(): SutTypes {
 }
 
 function makeFakeInput(): LoadUserInput {
-  return faker.datatype.uuid()
+  return fakeUser.accessToken as string
 }
 
 describe('LoadUserUseCase', () => {
-  it('should call encrypter.isTokenValid with the correct value', async () => {
+  it('should call decrypter.decrypt with the correct value', async () => {
     const { sut, decrypterAdapterStub } = makeSut()
-    const isTokenValidSpy = jest.spyOn(decrypterAdapterStub, 'isTokenValid')
+    const isTokenValidSpy = jest.spyOn(decrypterAdapterStub, 'decrypt')
     const input = makeFakeInput()
     await sut.execute(input)
     expect(isTokenValidSpy).toHaveBeenCalledWith(input)
+  })
+
+  it('should throw InvalidTokenError if decrypter.decrypt returns null', async () => {
+    const { sut, decrypterAdapterStub } = makeSut()
+    jest.spyOn(decrypterAdapterStub, 'decrypt').mockResolvedValueOnce(null)
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new InvalidTokenError())
+  })
+
+  it('should throw UserNotAuthorizedError if decodedToken is not the same as the one persisted on DB', async () => {
+    const { sut, decrypterAdapterStub } = makeSut()
+    jest
+      .spyOn(decrypterAdapterStub, 'decrypt')
+      .mockResolvedValueOnce(faker.datatype.uuid())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new UserNotAuthorizedError())
   })
 
   it('should call userRepository.findUserByAccessToken', async () => {
