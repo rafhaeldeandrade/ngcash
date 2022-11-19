@@ -8,7 +8,7 @@ import {
   AccountRepository,
   GetBalanceOutput
 } from '@/domain/repositories/account-repository'
-import { AccountNotFoundError } from '@/application/errors'
+import { UserNotAuthorizedError } from '@/application/errors'
 import { Prisma } from '@prisma/client'
 
 const fakeBalance = faker.datatype.number()
@@ -34,26 +34,38 @@ function makeSut(): SutTypes {
   }
 }
 
+const fakeId = faker.datatype.number()
 function makeFakeInput(): LoadUserAccountBalanceInput {
-  return faker.datatype.number()
+  return {
+    queryAccountId: fakeId,
+    authAccountId: fakeId
+  }
 }
 
 describe('LoadUserAccountBalanceUseCase', () => {
+  it('should throw UserNotAuthorizedError if authAccountId is not equal to queryAccountId', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    input.authAccountId = faker.datatype.number()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new UserNotAuthorizedError())
+  })
+
   it('should call accountRepository.getBalance with the correct value', async () => {
     const { sut, accountRepositoryStub } = makeSut()
     const getAccountByIdSpy = jest.spyOn(accountRepositoryStub, 'getBalance')
     const input = makeFakeInput()
     await sut.execute(input)
     expect(getAccountByIdSpy).toHaveBeenCalledTimes(1)
-    expect(getAccountByIdSpy).toHaveBeenCalledWith(input)
+    expect(getAccountByIdSpy).toHaveBeenCalledWith(input.queryAccountId)
   })
 
-  it('should throw AccountNotFoundError if accountRepository.getBalance returns null', async () => {
+  it('should throw UserNotAuthorizedError if accountRepository.getBalance returns null', async () => {
     const { sut, accountRepositoryStub } = makeSut()
     jest.spyOn(accountRepositoryStub, 'getBalance').mockResolvedValueOnce(null)
     const input = makeFakeInput()
     const promise = sut.execute(input)
-    await expect(promise).rejects.toThrow(new AccountNotFoundError(input))
+    await expect(promise).rejects.toThrow(new UserNotAuthorizedError())
   })
 
   it('should throw if accountRepository.getBalance throws', async () => {

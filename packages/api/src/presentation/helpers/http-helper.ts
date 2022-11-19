@@ -44,3 +44,10 @@ export const notFound = (error: Error): HttpResponse => ({
     message: error.message
   }
 })
+
+export const forbidden = (error: Error): HttpResponse => ({
+  statusCode: 403,
+  body: {
+    message: error.message
+  }
+})

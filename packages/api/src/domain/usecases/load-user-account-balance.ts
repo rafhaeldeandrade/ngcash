@@ -1,4 +1,7 @@
-export type LoadUserAccountBalanceInput = number
+export type LoadUserAccountBalanceInput = {
+  queryAccountId: number
+  authAccountId: number
+}
 
 export type LoadUserAccountBalanceOutput = {
   balance: number

@@ -21,9 +21,10 @@ export class LoadUserAccountBalanceController implements Controller {
         authAccountId: Number(httpRequest.body?.user?.accountId)
       })
       if (error) return badRequest(error)
-      const balance = await this.loadUserAccountBalanceUseCase.execute(
-        httpRequest.body.user?.accountId as number
-      )
+      const balance = await this.loadUserAccountBalanceUseCase.execute({
+        queryAccountId: Number(httpRequest.query?.accountId),
+        authAccountId: Number(httpRequest.body?.user?.accountId)
+      })
       return ok(balance)
     } catch (e) {
       return errorAdapter(e as Error)

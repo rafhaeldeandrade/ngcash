@@ -8,7 +8,7 @@ import {
   LoadUserAccountBalanceInput,
   LoadUserAccountBalanceOutput
 } from '@/domain/usecases/load-user-account-balance'
-import { AccountNotFoundError } from '@/application/errors'
+import { UserNotAuthorizedError } from '@/application/errors'
 
 const fakeBalance = faker.datatype.number()
 class LoadUserAccountBalanceUseCaseStub implements LoadUserAccountBalance {
@@ -104,22 +104,23 @@ describe('LoadUserAccountBalanceController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
-    expect(executeSpy).toHaveBeenCalledWith(httpRequest.body.user?.accountId)
+    expect(executeSpy).toHaveBeenCalledWith({
+      queryAccountId: Number(httpRequest.query?.accountId),
+      authAccountId: Number(httpRequest.body?.user?.accountId)
+    })
   })
 
-  it('should return 404 if loadUserAccountBalanceUseCase.execute throws AccountNotFoundError', async () => {
+  it('should return 403 if loadUserAccountBalanceUseCase.execute throws UserNotAuthorizedError', async () => {
     const { sut, loadUserAccountBalanceUseCaseStub } = makeSut()
     const httpRequest = makeFakeRequest()
     jest
       .spyOn(loadUserAccountBalanceUseCaseStub, 'execute')
-      .mockRejectedValueOnce(
-        new AccountNotFoundError(httpRequest.user?.accountId as number)
-      )
+      .mockRejectedValueOnce(new UserNotAuthorizedError())
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual({
-      statusCode: 404,
+      statusCode: 403,
       body: {
-        message: `Account ${httpRequest.user?.accountId} not found`
+        message: 'User not authorized'
       }
     })
   })
