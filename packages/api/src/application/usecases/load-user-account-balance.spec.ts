@@ -7,9 +7,10 @@ import { LoadUserAccountBalanceUseCase } from '@/application/usecases/load-user-
 import { AccountRepository } from '@/domain/repositories/account-repository'
 import { AccountNotFoundError } from '@/application/errors'
 
+const fakeBalance = faker.datatype.number()
 class AccountRepositoryStub implements AccountRepository {
   async getBalance(accountId: number): Promise<number | null> {
-    return faker.datatype.number()
+    return fakeBalance
   }
 }
 
@@ -57,5 +58,14 @@ describe('LoadUserAccountBalanceUseCase', () => {
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should return the correct values on success', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const balance = await sut.execute(input)
+    expect(balance).toEqual({
+      balance: fakeBalance
+    })
   })
 })
