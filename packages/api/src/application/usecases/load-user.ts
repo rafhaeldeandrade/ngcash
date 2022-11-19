@@ -4,7 +4,7 @@ import {
   LoadUserInput,
   LoadUserOutput
 } from '@/domain/usecases/load-user'
-import { UserNotFoundError } from '@/application/errors'
+import { UserNotFoundError, WrongCredentialsError } from '@/application/errors'
 import { Decrypter } from '../contracts'
 
 export class LoadUserUseCase implements LoadUser {
@@ -14,7 +14,8 @@ export class LoadUserUseCase implements LoadUser {
   ) {}
 
   async execute(accessToken: LoadUserInput): Promise<LoadUserOutput> {
-    await this.decrypter.isTokenValid(accessToken)
+    const isTokenValid = await this.decrypter.isTokenValid(accessToken)
+    if (!isTokenValid) throw new WrongCredentialsError()
     const user = await this.userRepository.findUserByAccessToken(accessToken)
     if (!user) throw new UserNotFoundError()
     return {
