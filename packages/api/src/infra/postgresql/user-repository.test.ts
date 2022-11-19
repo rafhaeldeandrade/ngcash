@@ -113,3 +113,50 @@ describe('PostgreSQLUserRepository.updateAccessToken', () => {
     expect(result?.accessToken).toBe(accessToken)
   })
 })
+
+describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
+  beforeAll(async () => {
+    await prismaHelper.connect()
+  })
+
+  afterAll(async () => {
+    await prismaHelper.disconnect()
+  })
+
+  beforeEach(async () => {
+    await prismaHelper.prisma.user.deleteMany()
+  })
+
+  it('should return user by accessToken if user is found', async () => {
+    const username = faker.internet.userName()
+    const password = faker.internet.password()
+    const accessToken = faker.datatype.uuid()
+    const account = await prismaHelper.prisma.account.create({
+      data: {
+        balance: 100
+      }
+    })
+    const user = await prismaHelper.prisma.user.create({
+      data: {
+        username,
+        password,
+        accountId: account.id,
+        accessToken
+      }
+    })
+
+    const sut = new PostgreSQLUserRepository()
+    const result = await sut.findUserByAccessToken(accessToken)
+
+    expect(result).toEqual(user)
+  })
+
+  it('should return null when user is not found', async () => {
+    const accessToken = faker.datatype.uuid()
+
+    const sut = new PostgreSQLUserRepository()
+    const result = await sut.findUserByAccessToken(accessToken)
+
+    expect(result).toBeNull()
+  })
+})

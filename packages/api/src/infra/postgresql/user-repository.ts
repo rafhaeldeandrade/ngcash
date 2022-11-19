@@ -47,4 +47,12 @@ export default class PostgreSQLUserRepository implements UserRepository {
       }
     })
   }
+
+  async findUserByAccessToken(accessToken: string): Promise<User | null> {
+    return await prismaHelper.prisma.user.findFirst({
+      where: {
+        accessToken
+      }
+    })
+  }
 }
