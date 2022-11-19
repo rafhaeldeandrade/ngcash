@@ -53,32 +53,32 @@ function makeFakeInput(): LoginInput {
 describe('AuthenticationUseCase', () => {
   afterEach(() => jest.restoreAllMocks())
 
-  it('should call userRepository.getUserByUsername with the correct value', async () => {
+  it('should call userRepository.findUserByUsername with the correct value', async () => {
     const { sut, userRepositoryStub } = makeSut()
-    const getUserByUsernameSpy = jest.spyOn(
+    const findUserByUsernameSpy = jest.spyOn(
       userRepositoryStub,
-      'getUserByUsername'
+      'findUserByUsername'
     )
     const input = makeFakeInput()
     await sut.execute(input)
-    expect(getUserByUsernameSpy).toHaveBeenCalledTimes(1)
-    expect(getUserByUsernameSpy).toHaveBeenCalledWith(input.username)
+    expect(findUserByUsernameSpy).toHaveBeenCalledTimes(1)
+    expect(findUserByUsernameSpy).toHaveBeenCalledWith(input.username)
   })
 
-  it('should throw WrongCredentials if UserRepository.getUserByUsername returns null', async () => {
+  it('should throw WrongCredentials if UserRepository.findUserByUsername returns null', async () => {
     const { sut, userRepositoryStub } = makeSut()
     jest
-      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .spyOn(userRepositoryStub, 'findUserByUsername')
       .mockResolvedValueOnce(null)
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new WrongCredentialsError())
   })
 
-  it('should throw if userRepository.getUserByUsername throws', async () => {
+  it('should throw if userRepository.findUserByUsername throws', async () => {
     const { sut, userRepositoryStub } = makeSut()
     jest
-      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .spyOn(userRepositoryStub, 'findUserByUsername')
       .mockRejectedValueOnce(new Error())
     const input = makeFakeInput()
     const promise = sut.execute(input)

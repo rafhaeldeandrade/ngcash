@@ -25,7 +25,7 @@ export function makeFakeUser(): User {
 
 export const fakeUser = makeFakeUser()
 export class UserRepositoryStub implements UserRepository {
-  async getUserByUsername(username: string): Promise<User | null> {
+  async findUserByUsername(username: string): Promise<User | null> {
     return fakeUser
   }
 

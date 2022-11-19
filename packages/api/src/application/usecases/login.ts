@@ -11,7 +11,7 @@ export class LoginUseCase implements Login {
   ) {}
 
   async execute(input: LoginInput): Promise<LoginOutput> {
-    const user = await this.userRepository.getUserByUsername(input.username)
+    const user = await this.userRepository.findUserByUsername(input.username)
     if (!user) throw new WrongCredentialsError()
     const passwordMatches = await this.hashComparer.compare(
       input.password,

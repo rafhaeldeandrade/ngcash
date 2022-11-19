@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
 import PostgreSQLUserRepository from './user-repository'
 
-describe('PostgreSQLUserRepository.getUserByUsername', () => {
+describe('PostgreSQLUserRepository.findUserByUsername', () => {
   beforeAll(async () => {
     await prismaHelper.connect()
   })
@@ -33,7 +33,7 @@ describe('PostgreSQLUserRepository.getUserByUsername', () => {
     })
 
     const sut = new PostgreSQLUserRepository()
-    const result = await sut.getUserByUsername(username)
+    const result = await sut.findUserByUsername(username)
 
     expect(result).toEqual(user)
   })
@@ -41,7 +41,7 @@ describe('PostgreSQLUserRepository.getUserByUsername', () => {
   it('should return null when a user is not found', async () => {
     const username = faker.internet.userName()
     const sut = new PostgreSQLUserRepository()
-    const result = await sut.getUserByUsername(username)
+    const result = await sut.findUserByUsername(username)
 
     expect(result).toBeNull()
   })

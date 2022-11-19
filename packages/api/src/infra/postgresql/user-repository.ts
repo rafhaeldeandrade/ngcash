@@ -26,7 +26,7 @@ export default class PostgreSQLUserRepository implements UserRepository {
     })
   }
 
-  async getUserByUsername(username: string): Promise<User | null> {
+  async findUserByUsername(username: string): Promise<User | null> {
     return await prismaHelper.prisma.user.findUnique({
       where: {
         username

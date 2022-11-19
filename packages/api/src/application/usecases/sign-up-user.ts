@@ -16,7 +16,7 @@ export class SignUpUserUseCase implements SignUpUser {
 
   async execute(input: SignUpUserInput): Promise<SignUpUserOutput> {
     const { username, password } = input
-    const user = await this.userRepository.getUserByUsername(username)
+    const user = await this.userRepository.findUserByUsername(username)
     if (user) throw new UserAlreadyExistsError(username)
     const hashedPassword = await this.hasher.hash(password)
     const savedUser = await this.userRepository.saveNewUser({

@@ -53,28 +53,28 @@ function makeFakeInput(): SignUpUserInput {
 describe('SignUpUserUseCase', () => {
   beforeEach(() => {
     jest
-      .spyOn(UserRepositoryStub.prototype, 'getUserByUsername')
+      .spyOn(UserRepositoryStub.prototype, 'findUserByUsername')
       .mockResolvedValue(null)
   })
   afterEach(() => jest.restoreAllMocks())
 
-  it('should call UserRepository.getUserByUsername with the correct value', async () => {
+  it('should call UserRepository.findUserByUsername with the correct value', async () => {
     const { sut, userRepositoryStub } = makeSut()
-    const getUserByUsernameSpy = jest.spyOn(
+    const findUserByUsernameSpy = jest.spyOn(
       userRepositoryStub,
-      'getUserByUsername'
+      'findUserByUsername'
     )
     const input = makeFakeInput()
     await sut.execute(input)
-    expect(getUserByUsernameSpy).toHaveBeenCalledTimes(1)
-    expect(getUserByUsernameSpy).toHaveBeenCalledWith(input.username)
+    expect(findUserByUsernameSpy).toHaveBeenCalledTimes(1)
+    expect(findUserByUsernameSpy).toHaveBeenCalledWith(input.username)
   })
 
-  it('should throw UserAlreadyExistsError if UserRepository.getUserByUsername returns an user', async () => {
+  it('should throw UserAlreadyExistsError if UserRepository.findUserByUsername returns an user', async () => {
     const fakeUser = makeFakeUser()
     const { sut, userRepositoryStub } = makeSut()
     jest
-      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .spyOn(userRepositoryStub, 'findUserByUsername')
       .mockResolvedValueOnce(fakeUser)
     const input = makeFakeInput()
     const promise = sut.execute(input)
@@ -83,10 +83,10 @@ describe('SignUpUserUseCase', () => {
     )
   })
 
-  it('should throw if userRepository.getUserByUsername throws', async () => {
+  it('should throw if userRepository.findUserByUsername throws', async () => {
     const { sut, userRepositoryStub } = makeSut()
     jest
-      .spyOn(userRepositoryStub, 'getUserByUsername')
+      .spyOn(userRepositoryStub, 'findUserByUsername')
       .mockRejectedValueOnce(new Error())
     const input = makeFakeInput()
     const promise = sut.execute(input)
