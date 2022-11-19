@@ -20,13 +20,9 @@ export class ZodSchemaValidate implements SchemaValidate {
       ]
       if (invalidParams.includes(issueCode)) {
         if (issueMessage === 'Required') {
-          return new MissingParamError(
-            invalidParam ? invalidParam : 'Some property'
-          )
+          return new MissingParamError(invalidParam ? invalidParam : '{}')
         }
-        return new InvalidParamError(
-          invalidParam ? invalidParam : 'Some property'
-        )
+        return new InvalidParamError(invalidParam ? invalidParam : '{}')
       }
     }
   }
