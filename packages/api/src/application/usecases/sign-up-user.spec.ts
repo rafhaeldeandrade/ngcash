@@ -1,42 +1,10 @@
-import { User } from '@/domain/entitities/user'
 import { UserRepository } from '@/domain/repositories/user-repository'
 import { SignUpUser, SignUpUserInput } from '@/domain/usecases/sign-up-user'
 import { faker } from '@faker-js/faker'
 import { UserAlreadyExistsError } from '@/application/errors'
 import { SignUpUserUseCase } from '@/application/usecases/sign-up-user'
 import { Encrypter, Hasher } from '@/application/contracts'
-import {
-  SaveNewUserInput,
-  SaveNewUserOutput
-} from '@/domain/repositories/user-repository'
-
-function makeFakeUser(): User {
-  return {
-    id: faker.datatype.number(),
-    username: faker.internet.userName(),
-    password: faker.internet.password(),
-    accountId: faker.datatype.number(),
-    accessToken: null
-  }
-}
-
-const fakeUser = makeFakeUser()
-class UserRepositoryStub implements UserRepository {
-  async getUserByUsername(username: string): Promise<User | null> {
-    return null
-  }
-
-  async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
-    return fakeUser
-  }
-
-  async updateAccessToken(
-    userId: number,
-    accessToken: string
-  ): Promise<User | null> {
-    return fakeUser
-  }
-}
+import { UserRepositoryStub, fakeUser, makeFakeUser } from '@/utils/test-stubs'
 
 const hashedPassword = `${faker.internet.password()}-hashed`
 class HasherAdapterStub implements Hasher {
@@ -83,6 +51,13 @@ function makeFakeInput(): SignUpUserInput {
 }
 
 describe('SignUpUserUseCase', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(UserRepositoryStub.prototype, 'getUserByUsername')
+      .mockResolvedValue(null)
+  })
+  afterEach(() => jest.restoreAllMocks())
+
   it('should call UserRepository.getUserByUsername with the correct value', async () => {
     const { sut, userRepositoryStub } = makeSut()
     const getUserByUsernameSpy = jest.spyOn(
@@ -96,10 +71,11 @@ describe('SignUpUserUseCase', () => {
   })
 
   it('should throw UserAlreadyExistsError if UserRepository.getUserByUsername returns an user', async () => {
+    const fakeUser = makeFakeUser()
     const { sut, userRepositoryStub } = makeSut()
     jest
       .spyOn(userRepositoryStub, 'getUserByUsername')
-      .mockResolvedValueOnce(makeFakeUser())
+      .mockResolvedValueOnce(fakeUser)
     const input = makeFakeInput()
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(

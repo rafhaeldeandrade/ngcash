@@ -11,4 +11,5 @@ export interface UserRepository {
   getUserByUsername(username: string): Promise<User | null>
   saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput>
   updateAccessToken(userId: number, accessToken: string): Promise<User | null>
+  findUserByAccessToken(accessToken: string): Promise<User | null>
 }

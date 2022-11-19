@@ -1,42 +1,11 @@
 import { faker } from '@faker-js/faker'
 import { User } from '@/domain/entitities/user'
-import {
-  SaveNewUserInput,
-  SaveNewUserOutput,
-  UserRepository
-} from '@/domain/repositories/user-repository'
+import { UserRepository } from '@/domain/repositories/user-repository'
 import { Login, LoginInput } from '@/domain/usecases/login'
 import { LoginUseCase } from '@/application/usecases/login'
-import { WrongCredentialsError } from '../errors'
+import { WrongCredentialsError } from '@/application/errors'
 import { Encrypter, HashComparer } from '@/application/contracts'
-
-function makeFakeUser(): User {
-  return {
-    id: faker.datatype.number(),
-    username: faker.internet.userName(),
-    password: faker.internet.password(),
-    accountId: faker.datatype.number(),
-    accessToken: null
-  }
-}
-
-const fakeUser = makeFakeUser()
-class UserRepositoryStub implements UserRepository {
-  async getUserByUsername(username: string): Promise<User | null> {
-    return fakeUser
-  }
-
-  async saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput> {
-    return fakeUser
-  }
-
-  async updateAccessToken(
-    userId: number,
-    accessToken: string
-  ): Promise<User | null> {
-    return fakeUser
-  }
-}
+import { fakeUser, UserRepositoryStub } from '@/utils/test-stubs'
 
 class HasherAdapterStub implements HashComparer {
   async compare(value: string, hash: string): Promise<boolean> {
