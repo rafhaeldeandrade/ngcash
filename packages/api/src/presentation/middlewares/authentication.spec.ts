@@ -128,9 +128,11 @@ describe('AuthenticationMiddleware', () => {
     expect(httpResponse).toEqual({
       statusCode: 200,
       body: {
-        id: fakeUser.id,
-        username: fakeUser.username,
-        accountId: fakeUser.accountId
+        user: {
+          id: fakeUser.id,
+          username: fakeUser.username,
+          accountId: fakeUser.accountId
+        }
       }
     })
   })
