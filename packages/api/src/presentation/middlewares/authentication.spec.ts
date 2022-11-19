@@ -7,16 +7,18 @@ import {
   LoadUserInput,
   LoadUserOutput
 } from '@/domain/usecases/load-user'
+import { UserNotFoundError } from '@/application/errors'
 
+const fakeUser = {
+  id: faker.datatype.number(),
+  username: faker.internet.userName(),
+  password: faker.internet.password(),
+  accountId: faker.datatype.number(),
+  accessToken: faker.datatype.uuid()
+}
 class LoadUserUseCaseStub implements LoadUser {
   async execute(input: LoadUserInput): Promise<LoadUserOutput> {
-    return {
-      id: faker.datatype.number(),
-      username: faker.internet.userName(),
-      password: faker.internet.password(),
-      accountId: faker.datatype.number(),
-      accessToken: faker.datatype.uuid()
-    }
+    return fakeUser
   }
 }
 
@@ -89,5 +91,20 @@ describe('AuthenticationMiddleware', () => {
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
     expect(executeSpy).toHaveBeenCalledWith(httpRequest.headers.authorization)
+  })
+
+  it('should return 404 if loadUserUseCase.execute throws UserNotFoundError', async () => {
+    const { sut, loadUserUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(loadUserUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new UserNotFoundError())
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 404,
+      body: {
+        message: 'User not found'
+      }
+    })
   })
 })

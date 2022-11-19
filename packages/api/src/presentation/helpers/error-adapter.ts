@@ -14,6 +14,8 @@ export const errorAdapter = (error: Error): HttpResponse => {
       return unauthorized()
     case 'AccountNotFoundError':
       return notFound(error)
+    case 'UserNotFoundError':
+      return notFound(error)
     default:
       return internalServerError()
   }
