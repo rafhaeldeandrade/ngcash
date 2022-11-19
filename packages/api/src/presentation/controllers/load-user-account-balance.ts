@@ -16,7 +16,9 @@ export class LoadUserAccountBalanceController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = await this.schemaValidate.validate(httpRequest.user)
+      const error = await this.schemaValidate.validate({
+        accountId: httpRequest.user?.accountId
+      })
       if (error) return badRequest(error)
       const balance = await this.loadUserAccountBalanceUseCase.execute(
         httpRequest.user?.accountId as number
