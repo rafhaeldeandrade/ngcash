@@ -12,10 +12,10 @@ export class LoadUserAccountBalanceUseCase implements LoadUserAccountBalance {
   async execute(
     input: LoadUserAccountBalanceInput
   ): Promise<LoadUserAccountBalanceOutput> {
-    const account = await this.accountRepository.getBalance(input)
-    if (!account) throw new AccountNotFoundError(input)
+    const balance = await this.accountRepository.getBalance(input)
+    if (!balance) throw new AccountNotFoundError(input)
     return {
-      balance: 0
+      balance
     }
   }
 }
