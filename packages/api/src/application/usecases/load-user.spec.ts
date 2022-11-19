@@ -4,16 +4,25 @@ import { UserRepositoryStub, fakeUser } from '@/utils/test-stubs'
 import { UserRepository } from '@/domain/repositories/user-repository'
 import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../errors'
+import { Decrypter } from '../contracts'
+
+class DecrypterAdapterStub implements Decrypter {
+  async isTokenValid(token: string): Promise<boolean> {
+    return true
+  }
+}
 
 interface SutTypes {
   sut: LoadUser
+  decrypterAdapterStub: Decrypter
   userRepositoryStub: UserRepository
 }
 
 function makeSut(): SutTypes {
+  const decrypterAdapterStub = new DecrypterAdapterStub()
   const userRepositoryStub = new UserRepositoryStub()
-  const sut = new LoadUserUseCase(userRepositoryStub)
-  return { sut, userRepositoryStub }
+  const sut = new LoadUserUseCase(decrypterAdapterStub, userRepositoryStub)
+  return { sut, decrypterAdapterStub, userRepositoryStub }
 }
 
 function makeFakeInput(): LoadUserInput {
@@ -21,6 +30,14 @@ function makeFakeInput(): LoadUserInput {
 }
 
 describe('LoadUserUseCase', () => {
+  it('should call encrypter.isTokenValid with the correct value', async () => {
+    const { sut, decrypterAdapterStub } = makeSut()
+    const isTokenValidSpy = jest.spyOn(decrypterAdapterStub, 'isTokenValid')
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(isTokenValidSpy).toHaveBeenCalledWith(input)
+  })
+
   it('should call userRepository.findUserByAccessToken', async () => {
     const { sut, userRepositoryStub } = makeSut()
     const findUserByTokenSpy = jest.spyOn(
