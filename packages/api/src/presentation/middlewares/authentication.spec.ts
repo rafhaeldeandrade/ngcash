@@ -12,9 +12,7 @@ import { UserNotFoundError } from '@/application/errors'
 const fakeUser = {
   id: faker.datatype.number(),
   username: faker.internet.userName(),
-  password: faker.internet.password(),
-  accountId: faker.datatype.number(),
-  accessToken: faker.datatype.uuid()
+  accountId: faker.datatype.number()
 }
 class LoadUserUseCaseStub implements LoadUser {
   async execute(input: LoadUserInput): Promise<LoadUserOutput> {
