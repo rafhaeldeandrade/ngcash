@@ -5,7 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import { badRequest } from '@/presentation/helpers/http-helper'
+import { badRequest, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '../helpers/error-adapter'
 
 export class AuthenticationMiddleware implements Middleware {
@@ -20,11 +20,14 @@ export class AuthenticationMiddleware implements Middleware {
         httpRequest.headers.authorization
       )
       if (error) return badRequest(error)
-      await this.loadUserUseCase.execute(httpRequest.headers.authorization)
-      return {
-        statusCode: 200,
-        body: null
-      }
+      const user = await this.loadUserUseCase.execute(
+        httpRequest.headers.authorization
+      )
+      return ok({
+        id: user.id,
+        username: user.username,
+        accountId: user.accountId
+      })
     } catch (e) {
       return errorAdapter(e as Error)
     }
