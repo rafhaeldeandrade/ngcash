@@ -52,4 +52,15 @@ describe('LoadUserUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow()
   })
+
+  it('should return the correct values on success', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const user = await sut.execute(input)
+    expect(user).toEqual({
+      id: fakeUser.id,
+      username: fakeUser.username,
+      accountId: fakeUser.accountId
+    })
+  })
 })
