@@ -4,6 +4,7 @@ export type HttpRequest = {
     id: number
     accountId: number
   }
+  headers?: any
 }
 
 export type HttpResponse = {
@@ -17,4 +18,8 @@ export interface Controller {
 
 export interface SchemaValidate {
   validate(input: any): Promise<Error | void>
+}
+
+export interface Middleware {
+  handle(httpRequest: HttpRequest): Promise<HttpResponse>
 }
