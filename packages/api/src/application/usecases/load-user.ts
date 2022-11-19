@@ -13,9 +13,9 @@ export class LoadUserUseCase implements LoadUser {
     const user = await this.userRepository.findUserByAccessToken(accessToken)
     if (!user) throw new UserNotFoundError()
     return {
-      id: 1,
-      username: 'any_username',
-      accountId: 1
+      id: user.id,
+      username: user.username,
+      accountId: user.accountId
     }
   }
 }
