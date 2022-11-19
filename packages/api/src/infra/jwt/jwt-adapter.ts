@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
-import { Encrypter } from '@/application/contracts'
+import { Encrypter, Decrypter } from '@/application/contracts'
 
-export class JWTAdapter implements Encrypter {
+export class JWTAdapter implements Encrypter, Decrypter {
   constructor(private readonly secret: string) {}
 
   async encrypt(value: string): Promise<string> {
@@ -19,6 +19,15 @@ export class JWTAdapter implements Encrypter {
           resolve(encoded as string)
         }
       )
+    })
+  }
+
+  async isTokenValid(token: string): Promise<boolean> {
+    return await new Promise((resolve, reject) => {
+      jwt.verify(token, this.secret, (err: Error | null, _decoded: any) => {
+        if (err) reject(err)
+        resolve(true)
+      })
     })
   }
 }
