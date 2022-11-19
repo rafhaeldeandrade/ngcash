@@ -5,6 +5,7 @@ export type HttpRequest = {
     accountId: number
   }
   headers?: any
+  query?: any
 }
 
 export type HttpResponse = {

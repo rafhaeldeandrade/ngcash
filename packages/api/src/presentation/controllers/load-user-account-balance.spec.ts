@@ -49,6 +49,9 @@ function makeFakeRequest(): HttpRequest {
         id: faker.datatype.number(),
         accountId: faker.datatype.number()
       }
+    },
+    query: {
+      accountId: faker.datatype.number()
     }
   }
 }
@@ -60,7 +63,10 @@ describe('LoadUserAccountBalanceController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledTimes(1)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body.user?.accountId)
+    expect(validateSpy).toHaveBeenCalledWith({
+      queryAccountId: Number(httpRequest.query?.accountId),
+      authAccountId: Number(httpRequest.body?.user?.accountId)
+    })
   })
 
   it('should return 400 if schemaValidate.validate returns an error', async () => {

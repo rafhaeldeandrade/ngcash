@@ -16,16 +16,16 @@ export class LoadUserAccountBalanceController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = await this.schemaValidate.validate(
-        httpRequest.body.user?.accountId
-      )
+      const error = await this.schemaValidate.validate({
+        queryAccountId: Number(httpRequest.query?.accountId),
+        authAccountId: Number(httpRequest.body?.user?.accountId)
+      })
       if (error) return badRequest(error)
       const balance = await this.loadUserAccountBalanceUseCase.execute(
         httpRequest.body.user?.accountId as number
       )
       return ok(balance)
     } catch (e) {
-      console.log(e)
       return errorAdapter(e as Error)
     }
   }
