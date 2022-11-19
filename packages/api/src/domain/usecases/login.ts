@@ -5,6 +5,8 @@ export type LoginInput = {
 
 export type LoginOutput = {
   accessToken: string
+  userId: number
+  accountId: number
 }
 
 export interface Login {

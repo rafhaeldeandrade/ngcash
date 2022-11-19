@@ -11,11 +11,14 @@ class SchemaValidateStub implements SchemaValidate {
   }
 }
 
+const fakeUseCaseOutput = {
+  accessToken: faker.datatype.uuid(),
+  userId: faker.datatype.number(),
+  accountId: faker.datatype.number()
+}
 class LoginUseCaseStub implements Login {
   async execute(input: LoginInput): Promise<LoginOutput> {
-    return {
-      accessToken: faker.datatype.uuid()
-    }
+    return fakeUseCaseOutput
   }
 }
 
@@ -130,9 +133,7 @@ describe('AuthenticateController', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual({
       statusCode: 200,
-      body: {
-        accessToken: expect.any(String)
-      }
+      body: fakeUseCaseOutput
     })
   })
 })

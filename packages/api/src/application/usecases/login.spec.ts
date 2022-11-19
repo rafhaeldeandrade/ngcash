@@ -160,7 +160,9 @@ describe('AuthenticationUseCase', () => {
     const input = makeFakeInput()
     const accessToken = await sut.execute(input)
     expect(accessToken).toEqual({
-      accessToken: fakeToken
+      accessToken: fakeToken,
+      userId: fakeUser.id,
+      accountId: fakeUser.accountId
     })
   })
 })

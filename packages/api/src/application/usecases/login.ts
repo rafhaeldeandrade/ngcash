@@ -21,7 +21,9 @@ export class LoginUseCase implements Login {
     const newAccessToken = await this.encrypter.encrypt(user.id.toString())
     await this.userRepository.updateAccessToken(user.id, newAccessToken)
     return {
-      accessToken: newAccessToken
+      accessToken: newAccessToken,
+      userId: user.id,
+      accountId: user.accountId
     }
   }
 }
