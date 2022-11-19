@@ -4,13 +4,19 @@ import {
   LoadUserAccountBalanceInput
 } from '@/domain/usecases/load-user-account-balance'
 import { LoadUserAccountBalanceUseCase } from '@/application/usecases/load-user-account-balance'
-import { AccountRepository } from '@/domain/repositories/account-repository'
+import {
+  AccountRepository,
+  GetBalanceOutput
+} from '@/domain/repositories/account-repository'
 import { AccountNotFoundError } from '@/application/errors'
+import { Prisma } from '@prisma/client'
 
 const fakeBalance = faker.datatype.number()
 class AccountRepositoryStub implements AccountRepository {
-  async getBalance(accountId: number): Promise<number | null> {
-    return fakeBalance
+  async getBalance(accountId: number): Promise<GetBalanceOutput | null> {
+    return {
+      balance: new Prisma.Decimal(fakeBalance)
+    }
   }
 }
 
