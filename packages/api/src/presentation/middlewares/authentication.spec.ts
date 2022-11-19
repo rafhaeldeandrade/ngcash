@@ -2,16 +2,38 @@ import { faker } from '@faker-js/faker'
 import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
 import { AuthenticationMiddleware } from '@/presentation/middlewares/authentication'
 import { SchemaValidateStub } from '@/utils/test-stubs'
+import {
+  LoadUser,
+  LoadUserInput,
+  LoadUserOutput
+} from '@/domain/usecases/load-user'
+
+class LoadUserUseCaseStub implements LoadUser {
+  async execute(input: LoadUserInput): Promise<LoadUserOutput> {
+    return {
+      id: faker.datatype.number(),
+      username: faker.internet.userName(),
+      password: faker.internet.password(),
+      accountId: faker.datatype.number(),
+      accessToken: faker.datatype.uuid()
+    }
+  }
+}
 
 interface SutTypes {
   sut: AuthenticationMiddleware
   schemaValidateStub: SchemaValidate
+  loadUserUseCaseStub: LoadUser
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const sut = new AuthenticationMiddleware(schemaValidateStub)
-  return { sut, schemaValidateStub }
+  const loadUserUseCaseStub = new LoadUserUseCaseStub()
+  const sut = new AuthenticationMiddleware(
+    schemaValidateStub,
+    loadUserUseCaseStub
+  )
+  return { sut, schemaValidateStub, loadUserUseCaseStub }
 }
 
 function makeFakeRequest(): HttpRequest {
@@ -58,5 +80,14 @@ describe('AuthenticationMiddleware', () => {
         message: 'Internal server error'
       }
     })
+  })
+
+  it('should call loadUserUseCase.execute with the correct values', async () => {
+    const { sut, loadUserUseCaseStub } = makeSut()
+    const executeSpy = jest.spyOn(loadUserUseCaseStub, 'execute')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.headers.authorization)
   })
 })
