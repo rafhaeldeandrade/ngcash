@@ -50,7 +50,7 @@ function makeFakeRequest(): HttpRequest {
         accountId: faker.datatype.number()
       }
     },
-    query: {
+    params: {
       accountId: faker.datatype.number()
     }
   }
@@ -64,7 +64,7 @@ describe('LoadUserAccountBalanceController', () => {
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledTimes(1)
     expect(validateSpy).toHaveBeenCalledWith({
-      queryAccountId: Number(httpRequest.query?.accountId),
+      paramsAccountId: Number(httpRequest.params?.accountId),
       authAccountId: Number(httpRequest.body?.user?.accountId)
     })
   })
@@ -105,7 +105,7 @@ describe('LoadUserAccountBalanceController', () => {
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
     expect(executeSpy).toHaveBeenCalledWith({
-      queryAccountId: Number(httpRequest.query?.accountId),
+      paramsAccountId: Number(httpRequest.params?.accountId),
       authAccountId: Number(httpRequest.body?.user?.accountId)
     })
   })

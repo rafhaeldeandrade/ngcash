@@ -1,5 +1,5 @@
 export type LoadUserAccountBalanceInput = {
-  queryAccountId: number
+  paramsAccountId: number
   authAccountId: number
 }
 

@@ -6,7 +6,7 @@ import { makeAuthenticationMiddleware } from '@/main/factories/make-authenticati
 
 export default function (router: Router): void {
   router.get(
-    '/accounts/balance',
+    '/accounts/:accountId',
     [expressMiddlewareAdapter(makeAuthenticationMiddleware())],
     expressRouteAdapter(makeLoadUserAccountBalanceController())
   )

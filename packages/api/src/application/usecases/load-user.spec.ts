@@ -6,14 +6,13 @@ import { faker } from '@faker-js/faker'
 import {
   InvalidTokenError,
   UserNotAuthorizedError,
-  UserNotFoundError,
-  WrongCredentialsError
+  UserNotFoundError
 } from '@/application/errors'
 import { Decrypter } from '@/application/contracts'
 
 class DecrypterAdapterStub implements Decrypter {
   async decrypt(value: string): Promise<string> {
-    return fakeUser.accessToken as string
+    return fakeUser.id.toString() as string
   }
 }
 

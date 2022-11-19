@@ -8,7 +8,8 @@ import { PostgreSQLAccountRepository } from '@/infra/postgresql/account-reposito
 
 export function makeLoadUserAccountBalanceController(): Controller {
   const zodSchema = z.object({
-    accountId: z.number()
+    paramsAccountId: z.number(),
+    authAccountId: z.number()
   })
   const zodSchemaValidate = new ZodSchemaValidate(zodSchema)
   const postgreSQLAccountRepository = new PostgreSQLAccountRepository()

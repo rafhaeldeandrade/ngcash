@@ -37,7 +37,7 @@ function makeSut(): SutTypes {
 const fakeId = faker.datatype.number()
 function makeFakeInput(): LoadUserAccountBalanceInput {
   return {
-    queryAccountId: fakeId,
+    paramsAccountId: fakeId,
     authAccountId: fakeId
   }
 }
@@ -57,7 +57,7 @@ describe('LoadUserAccountBalanceUseCase', () => {
     const input = makeFakeInput()
     await sut.execute(input)
     expect(getAccountByIdSpy).toHaveBeenCalledTimes(1)
-    expect(getAccountByIdSpy).toHaveBeenCalledWith(input.queryAccountId)
+    expect(getAccountByIdSpy).toHaveBeenCalledWith(input.paramsAccountId)
   })
 
   it('should throw UserNotAuthorizedError if accountRepository.getBalance returns null', async () => {

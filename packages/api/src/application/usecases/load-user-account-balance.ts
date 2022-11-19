@@ -12,9 +12,9 @@ export class LoadUserAccountBalanceUseCase implements LoadUserAccountBalance {
   async execute(
     input: LoadUserAccountBalanceInput
   ): Promise<LoadUserAccountBalanceOutput> {
-    const { queryAccountId, authAccountId } = input
-    if (queryAccountId !== authAccountId) throw new UserNotAuthorizedError()
-    const account = await this.accountRepository.getBalance(queryAccountId)
+    const { paramsAccountId, authAccountId } = input
+    if (paramsAccountId !== authAccountId) throw new UserNotAuthorizedError()
+    const account = await this.accountRepository.getBalance(paramsAccountId)
     if (!account?.balance) throw new UserNotAuthorizedError()
     return {
       balance: account.balance.toNumber()
