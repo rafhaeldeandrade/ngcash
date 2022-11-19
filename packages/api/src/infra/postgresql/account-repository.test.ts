@@ -16,7 +16,7 @@ describe('PostgreSQLAccountRepository.getBalance', () => {
     await prismaHelper.prisma.account.deleteMany()
   })
 
-  it('should return the correct balance when account was found', async () => {
+  it('should return the correct balance when account is found', async () => {
     const balance = new Prisma.Decimal(faker.datatype.number())
     const account = await prismaHelper.prisma.account.create({
       data: {
@@ -29,5 +29,13 @@ describe('PostgreSQLAccountRepository.getBalance', () => {
     expect(result).toEqual({
       balance: account.balance
     })
+  })
+
+  it('should return null when account is not found', async () => {
+    const fakeId = faker.datatype.number()
+    const sut = new PostgreSQLAccountRepository()
+    const result = await sut.getBalance(fakeId)
+
+    expect(result).toBeNull()
   })
 })
