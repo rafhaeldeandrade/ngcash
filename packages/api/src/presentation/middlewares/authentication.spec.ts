@@ -7,7 +7,11 @@ import {
   LoadUserInput,
   LoadUserOutput
 } from '@/domain/usecases/load-user'
-import { UserNotFoundError } from '@/application/errors'
+import {
+  InvalidTokenError,
+  UserNotAuthorizedError,
+  UserNotFoundError
+} from '@/application/errors'
 
 const fakeUser = {
   id: faker.datatype.number(),
@@ -106,7 +110,37 @@ describe('AuthenticationMiddleware', () => {
     })
   })
 
-  it('should return 500 if loadUserUseCase.execute throws any error but UserNotFoundError', async () => {
+  it('should return 403 if loadUserUseCase.execute throws UserNotAuthorizedError', async () => {
+    const { sut, loadUserUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(loadUserUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new UserNotAuthorizedError())
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 403,
+      body: {
+        message: 'User not authorized'
+      }
+    })
+  })
+
+  it('should return 400 if loadUserUseCase.execute throws InvalidTokenError', async () => {
+    const { sut, loadUserUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(loadUserUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new InvalidTokenError())
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: {
+        message: 'Invalid or expired token, try logging in again'
+      }
+    })
+  })
+
+  it('should return 500 if loadUserUseCase.execute throws any error but UserNotFoundError, InvalidTokenError or UserNotAuthorizedError', async () => {
     const { sut, loadUserUseCaseStub } = makeSut()
     jest
       .spyOn(loadUserUseCaseStub, 'execute')

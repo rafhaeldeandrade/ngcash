@@ -1,5 +1,6 @@
 import { HttpResponse } from '@/presentation/contracts'
 import {
+  badRequest,
   conflict,
   forbidden,
   internalServerError,
@@ -19,6 +20,8 @@ export const errorAdapter = (error: Error): HttpResponse => {
       return notFound(error)
     case 'UserNotAuthorizedError':
       return forbidden(error)
+    case 'InvalidTokenError':
+      return badRequest(error)
     default:
       return internalServerError()
   }
