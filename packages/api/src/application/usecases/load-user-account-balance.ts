@@ -4,6 +4,7 @@ import {
   LoadUserAccountBalanceInput,
   LoadUserAccountBalanceOutput
 } from '@/domain/usecases/load-user-account-balance'
+import { AccountNotFoundError } from '@/application/errors'
 
 export class LoadUserAccountBalanceUseCase implements LoadUserAccountBalance {
   constructor(private readonly accountRepository: AccountRepository) {}
@@ -11,7 +12,8 @@ export class LoadUserAccountBalanceUseCase implements LoadUserAccountBalance {
   async execute(
     input: LoadUserAccountBalanceInput
   ): Promise<LoadUserAccountBalanceOutput> {
-    await this.accountRepository.getAccountById(input)
+    const account = await this.accountRepository.getBalance(input)
+    if (!account) throw new AccountNotFoundError(input)
     return {
       balance: 0
     }
