@@ -10,7 +10,7 @@ export class ZodSchemaValidate implements SchemaValidate {
     if (!result.success) {
       const issueCode = result.error.issues[0].code
       const issueMessage = result.error.issues[0].message
-      const invalidParam = result.error.issues[0].path[0].toString()
+      const invalidParam = result.error.issues[0].path[0]?.toString()
       const invalidParams = [
         'invalid_type',
         'invalid_string',
@@ -20,9 +20,13 @@ export class ZodSchemaValidate implements SchemaValidate {
       ]
       if (invalidParams.includes(issueCode)) {
         if (issueMessage === 'Required') {
-          return new MissingParamError(invalidParam ? invalidParam : 'body')
+          return new MissingParamError(
+            invalidParam ? invalidParam : 'Some property'
+          )
         }
-        return new InvalidParamError(invalidParam ? invalidParam : 'body')
+        return new InvalidParamError(
+          invalidParam ? invalidParam : 'Some property'
+        )
       }
     }
   }

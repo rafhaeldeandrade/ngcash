@@ -44,9 +44,11 @@ function makeSut(): SutTypes {
 
 function makeFakeRequest(): HttpRequest {
   return {
-    user: {
-      id: faker.datatype.number(),
-      accountId: faker.datatype.number()
+    body: {
+      user: {
+        id: faker.datatype.number(),
+        accountId: faker.datatype.number()
+      }
     }
   }
 }
@@ -58,9 +60,7 @@ describe('LoadUserAccountBalanceController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledTimes(1)
-    expect(validateSpy).toHaveBeenCalledWith({
-      accountId: httpRequest.user?.accountId
-    })
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body.user?.accountId)
   })
 
   it('should return 400 if schemaValidate.validate returns an error', async () => {
@@ -98,7 +98,7 @@ describe('LoadUserAccountBalanceController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledTimes(1)
-    expect(executeSpy).toHaveBeenCalledWith(httpRequest.user?.accountId)
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.body.user?.accountId)
   })
 
   it('should return 404 if loadUserAccountBalanceUseCase.execute throws AccountNotFoundError', async () => {
