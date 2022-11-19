@@ -48,4 +48,14 @@ describe('LoadUserAccountBalanceUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new AccountNotFoundError(input))
   })
+
+  it('should throw if accountRepository.getBalance throws', async () => {
+    const { sut, accountRepositoryStub } = makeSut()
+    jest
+      .spyOn(accountRepositoryStub, 'getBalance')
+      .mockRejectedValueOnce(new Error())
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow()
+  })
 })
