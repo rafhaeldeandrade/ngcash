@@ -6,6 +6,7 @@ import {
   UserRepository
 } from '@/domain/repositories/user-repository'
 import { SchemaValidate } from '@/presentation/contracts'
+import { Prisma } from '@prisma/client'
 
 export class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | void> {
@@ -19,7 +20,11 @@ export function makeFakeUser(): User {
     username: faker.internet.userName(),
     password: faker.internet.password(),
     accountId: faker.datatype.number(),
-    accessToken: faker.datatype.uuid()
+    accessToken: faker.datatype.uuid(),
+    account: {
+      id: faker.datatype.number(),
+      balance: new Prisma.Decimal(faker.datatype.number())
+    }
   }
 }
 
