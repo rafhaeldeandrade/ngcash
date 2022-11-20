@@ -139,4 +139,16 @@ describe('AddTransactionController', () => {
       }
     })
   })
+
+  it('should return 201 with the correct values on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 201,
+      body: {
+        message: 'Transaction successfully created'
+      }
+    })
+  })
 })
