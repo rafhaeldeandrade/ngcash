@@ -1,31 +1,42 @@
+import {
+  AddTransaction,
+  AddTransactionInput,
+  AddTransactionOutput
+} from '@/domain/usecases/add-transaction'
 import { SchemaValidateStub } from '@/utils/test-stubs'
 import { faker } from '@faker-js/faker'
 import { Prisma } from '@prisma/client'
 import { HttpRequest, SchemaValidate } from '../contracts'
 import { AddTransactionController } from './add-transaction'
 
-// const fakeUseCaseOutput = {
-//   from: faker.datatype.uuid(),
-//   to: faker.datatype.uuid(),
-//   amountTransacted: new Prisma.Decimal(faker.datatype.number())
-// }
-// class AddTransactionUseCaseStub implements AddTransaction {
-//   async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
-//     return fakeUseCaseOutput
-//   }
-// }
+const fakeUseCaseOutput = {
+  from: faker.datatype.uuid(),
+  to: faker.datatype.uuid(),
+  amountTransacted: new Prisma.Decimal(faker.datatype.number())
+}
+class AddTransactionUseCaseStub implements AddTransaction {
+  async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
+    return fakeUseCaseOutput
+  }
+}
 
 interface SutTypes {
   sut: AddTransactionController
   schemaValidateStub: SchemaValidate
+  addTransactionUseCaseStub: AddTransaction
 }
 
 function makeSut(): SutTypes {
   const schemaValidateStub = new SchemaValidateStub()
-  const sut = new AddTransactionController(schemaValidateStub)
+  const addTransactionUseCaseStub = new AddTransactionUseCaseStub()
+  const sut = new AddTransactionController(
+    schemaValidateStub,
+    addTransactionUseCaseStub
+  )
   return {
     sut,
-    schemaValidateStub
+    schemaValidateStub,
+    addTransactionUseCaseStub
   }
 }
 
@@ -81,6 +92,19 @@ describe('AddTransactionController', () => {
       body: {
         message: 'Internal server error'
       }
+    })
+  })
+
+  it('should call addTransactionUseCase.execute with the correct values', async () => {
+    const { sut, addTransactionUseCaseStub } = makeSut()
+    const executeSpy = jest.spyOn(addTransactionUseCaseStub, 'execute')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+    expect(executeSpy).toHaveBeenCalledWith({
+      usernameToCashIn: httpRequest.body?.usernameToCashIn,
+      amount: new Prisma.Decimal(httpRequest.body?.amount),
+      authAccountId: httpRequest.body?.user?.authAccountId
     })
   })
 })
