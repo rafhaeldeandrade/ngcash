@@ -21,7 +21,7 @@ export class LoadUserUseCase implements LoadUser {
     const decodedToken = await this.decrypter.decrypt(accessToken)
     if (!decodedToken) throw new InvalidTokenError()
     const user = await this.userRepository.findUserByAccessToken(accessToken)
-    if (!user) throw new UserNotFoundError()
+    if (!user) throw new InvalidTokenError()
     if (user.id !== Number(decodedToken)) throw new UserNotAuthorizedError()
     return {
       id: user.id,
