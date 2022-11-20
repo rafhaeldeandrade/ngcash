@@ -5,14 +5,17 @@ import {
   AddTransactionOutput
 } from '@/domain/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
-import { UserNotAuthorizedError } from '../errors'
+import { UserNotAuthorizedError, UserNotFoundError } from '../errors'
 
 export class AddTransactionUseCase implements AddTransaction {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
     const { authAccountId, usernameToCashIn } = input
-    await this.userRepository.findUserByUsername(usernameToCashIn)
+    const userToCashIn = await this.userRepository.findUserByUsername(
+      usernameToCashIn
+    )
+    if (!userToCashIn) throw new UserNotFoundError()
     const user = await this.userRepository.findUserById(authAccountId)
     if (user?.username === usernameToCashIn) {
       throw new UserNotAuthorizedError()
