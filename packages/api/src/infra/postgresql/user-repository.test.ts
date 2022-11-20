@@ -14,6 +14,7 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
   })
 
   beforeEach(async () => {
+    await prismaHelper.prisma.account.deleteMany()
     await prismaHelper.prisma.user.deleteMany()
   })
 
@@ -64,8 +65,8 @@ describe('PostgreSQLUserRepository.saveNewUser', () => {
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.user.deleteMany()
     await prismaHelper.prisma.account.deleteMany()
+    await prismaHelper.prisma.user.deleteMany()
   })
 
   it("should create an account and set its id to the user's accountId", async () => {
@@ -94,6 +95,7 @@ describe('PostgreSQLUserRepository.updateAccessToken', () => {
   })
 
   beforeEach(async () => {
+    await prismaHelper.prisma.account.deleteMany()
     await prismaHelper.prisma.user.deleteMany()
   })
 
@@ -131,10 +133,11 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
   })
 
   beforeEach(async () => {
+    await prismaHelper.prisma.account.deleteMany()
     await prismaHelper.prisma.user.deleteMany()
   })
 
-  it('should return user by accessToken if user is found', async () => {
+  it('should return user if it is found', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const accessToken = faker.datatype.uuid()
@@ -169,6 +172,60 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
 
     const sut = new PostgreSQLUserRepository()
     const result = await sut.findUserByAccessToken(accessToken)
+
+    expect(result).toBeNull()
+  })
+})
+
+describe('PostgreSQLUserRepository.findUserById', () => {
+  beforeAll(async () => {
+    await prismaHelper.connect()
+  })
+
+  afterAll(async () => {
+    await prismaHelper.disconnect()
+  })
+
+  beforeEach(async () => {
+    await prismaHelper.prisma.account.deleteMany()
+    await prismaHelper.prisma.user.deleteMany()
+  })
+
+  it('should return user if it is found', async () => {
+    const username = faker.internet.userName()
+    const password = faker.internet.password()
+    const accessToken = faker.datatype.uuid()
+    const account = await prismaHelper.prisma.account.create({
+      data: {
+        balance: 100
+      }
+    })
+    const user = await prismaHelper.prisma.user.create({
+      data: {
+        username,
+        password,
+        accountId: account.id,
+        accessToken
+      }
+    })
+
+    const sut = new PostgreSQLUserRepository()
+    const result = await sut.findUserById(user.id)
+
+    expect(result).toEqual({
+      ...user,
+      account: {
+        id: account.id,
+        balance: account.balance
+      }
+    })
+  })
+
+  it('should return null when user is not found', async () => {
+    const fakeId = faker.datatype.number()
+
+    const sut = new PostgreSQLUserRepository()
+    const result = await sut.findUserById(fakeId)
 
     expect(result).toBeNull()
   })
