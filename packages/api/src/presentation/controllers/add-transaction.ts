@@ -7,7 +7,7 @@ import {
   SchemaValidate
 } from '../contracts'
 import { errorAdapter } from '../helpers/error-adapter'
-import { badRequest } from '../helpers/http-helper'
+import { badRequest, created } from '../helpers/http-helper'
 
 export class AddTransactionController implements Controller {
   constructor(
@@ -28,12 +28,9 @@ export class AddTransactionController implements Controller {
         amount: new Prisma.Decimal(httpRequest.body?.amount),
         authAccountId: httpRequest.body?.user?.accountId
       })
-      return {
-        statusCode: 201,
-        body: {
-          message: 'Transaction added successfully'
-        }
-      }
+      return created({
+        message: 'Transaction successfully created'
+      })
     } catch (e) {
       return errorAdapter(e as Error)
     }
