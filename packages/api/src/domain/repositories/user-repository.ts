@@ -12,4 +12,5 @@ export interface UserRepository {
   saveNewUser(input: SaveNewUserInput): Promise<SaveNewUserOutput>
   updateAccessToken(userId: number, accessToken: string): Promise<User | null>
   findUserByAccessToken(accessToken: string): Promise<User | null>
+  findUserById(userId: number): Promise<User | null>
 }
