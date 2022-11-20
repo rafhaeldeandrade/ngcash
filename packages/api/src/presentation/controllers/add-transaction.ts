@@ -26,7 +26,7 @@ export class AddTransactionController implements Controller {
       await this.addTransactionUseCase.execute({
         usernameToCashIn: httpRequest.body?.usernameToCashIn,
         amount: new Prisma.Decimal(httpRequest.body?.amount),
-        authAccountId: httpRequest.body?.user?.authAccountId
+        authAccountId: httpRequest.body?.user?.accountId
       })
       return {
         statusCode: 201,

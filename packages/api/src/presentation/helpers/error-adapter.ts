@@ -22,6 +22,8 @@ export const errorAdapter = (error: Error): HttpResponse => {
       return forbidden(error)
     case 'InvalidTokenError':
       return badRequest(error)
+    case 'InvalidParamError':
+      return badRequest(error)
     default:
       return internalServerError()
   }
