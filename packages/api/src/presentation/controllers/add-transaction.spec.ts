@@ -124,4 +124,19 @@ describe('AddTransactionController', () => {
       }
     })
   })
+
+  it('should return 500 if addTransactionUseCase.execute throws any error but InvalidParamError', async () => {
+    const { sut, addTransactionUseCaseStub } = makeSut()
+    jest
+      .spyOn(addTransactionUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
