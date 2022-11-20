@@ -1,32 +1,28 @@
 import { faker } from '@faker-js/faker'
 
-import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
+import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 import PostgreSQLUserRepository from './user-repository'
 import { Prisma } from '@prisma/client'
 
 describe('PostgreSQLUserRepository.findUserByUsername', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
-    await prismaHelper.prisma.user.deleteMany()
+    await prisma.account.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   it('should return User when a user was found by its username', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: new Prisma.Decimal(100)
       }
     })
-    const user = await prismaHelper.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         password,
@@ -56,17 +52,13 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
 })
 
 describe('PostgreSQLUserRepository.saveNewUser', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
-    await prismaHelper.prisma.user.deleteMany()
+    await prisma.account.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   it("should create an account and set its id to the user's accountId", async () => {
@@ -75,7 +67,7 @@ describe('PostgreSQLUserRepository.saveNewUser', () => {
 
     const sut = new PostgreSQLUserRepository()
     const user = await sut.saveNewUser({ username, password })
-    const account = await prismaHelper.prisma.account.findUnique({
+    const account = await prisma.account.findUnique({
       where: {
         id: user.accountId
       }
@@ -86,28 +78,24 @@ describe('PostgreSQLUserRepository.saveNewUser', () => {
 })
 
 describe('PostgreSQLUserRepository.updateAccessToken', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
-    await prismaHelper.prisma.user.deleteMany()
+    await prisma.account.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   it('should update the user with the given accessToken', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: 100
       }
     })
-    const user = await prismaHelper.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         password,
@@ -124,29 +112,25 @@ describe('PostgreSQLUserRepository.updateAccessToken', () => {
 })
 
 describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
-    await prismaHelper.prisma.user.deleteMany()
+    await prisma.account.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   it('should return user if it is found', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const accessToken = faker.datatype.uuid()
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: 100
       }
     })
-    const user = await prismaHelper.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         password,
@@ -178,29 +162,25 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
 })
 
 describe('PostgreSQLUserRepository.findUserById', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
-    await prismaHelper.prisma.user.deleteMany()
+    await prisma.account.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   it('should return user if it is found', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const accessToken = faker.datatype.uuid()
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: 100
       }
     })
-    const user = await prismaHelper.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         password,

@@ -1,7 +1,7 @@
 import { Transaction } from '@/domain/entitities/transaction'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
 import { Decimal } from '@prisma/client/runtime'
-import prismaHelper from './helpers/prisma-helper'
+import { prisma } from './adapters/prisma-adapter'
 
 export class PostgreSQLTransactionRepository implements TransactionRepository {
   async save(
@@ -9,7 +9,7 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
     toId: number,
     amount: Decimal
   ): Promise<Transaction> {
-    return prismaHelper.prisma.transaction.create({
+    return prisma.transaction.create({
       data: {
         debitedAccountId: fromId,
         creditedAccountId: toId,

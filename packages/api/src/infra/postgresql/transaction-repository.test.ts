@@ -1,30 +1,26 @@
 import { faker } from '@faker-js/faker'
 import { Prisma } from '@prisma/client'
 
-import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
+import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 import { PostgreSQLTransactionRepository } from '@/infra/postgresql/transaction-repository'
 
 describe('PostgreSQLTransactionRepository.save', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
-    await prismaHelper.prisma.transaction.deleteMany()
+    await prisma.$disconnect()
+    await prisma.transaction.deleteMany()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.account.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should save a transaction correctly', async () => {
-    const account1 = await prismaHelper.prisma.account.create({
+    const account1 = await prisma.account.create({
       data: {
         balance: new Prisma.Decimal(100)
       }
     })
-    const account2 = await prismaHelper.prisma.account.create({
+    const account2 = await prisma.account.create({
       data: {
         balance: new Prisma.Decimal(100)
       }

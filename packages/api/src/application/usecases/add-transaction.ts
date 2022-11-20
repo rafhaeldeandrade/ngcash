@@ -4,18 +4,21 @@ import {
   AddTransactionInput,
   AddTransactionOutput
 } from '@/domain/usecases/add-transaction'
-import { Prisma } from '@prisma/client'
 import {
   BalanceIsNotEnoughError,
   UserNotAuthorizedError,
   UserNotFoundError
 } from '@/application/errors'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
+import { AccountRepository } from '@/domain/repositories/account-repository'
+import { DbAdapter } from '@/application/contracts'
 
 export class AddTransactionUseCase implements AddTransaction {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly transactionRepositoy: TransactionRepository
+    private readonly accountRepository: AccountRepository,
+    private readonly transactionRepositoy: TransactionRepository,
+    private readonly dbAdapter: DbAdapter
   ) {}
 
   async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
@@ -32,11 +35,11 @@ export class AddTransactionUseCase implements AddTransaction {
     if (userToCashOut?.account.balance.lt(input.amount)) {
       throw new BalanceIsNotEnoughError()
     }
-    await this.transactionRepositoy.save(
-      userToCashOut?.account.id,
-      userToCashIn?.account.id,
-      new Prisma.Decimal(amount)
-    )
+    this.dbAdapter.initiateDbTransaction([
+      this.accountRepository.decrementBalance(userToCashOut.id, amount),
+      this.accountRepository.incrementBalance(userToCashIn.id, amount),
+      this.transactionRepositoy.save(userToCashOut.id, userToCashOut.id, amount)
+    ])
     return {
       from: userToCashOut.username,
       to: userToCashIn.username,

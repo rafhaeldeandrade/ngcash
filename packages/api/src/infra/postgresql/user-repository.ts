@@ -4,11 +4,11 @@ import {
   UserRepository
 } from '@/domain/repositories/user-repository'
 import { Prisma } from '@prisma/client'
-import prismaHelper from './helpers/prisma-helper'
+import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 
 export default class PostgreSQLUserRepository implements UserRepository {
   async saveNewUser(input: SaveNewUserInput): Promise<User> {
-    return prismaHelper.prisma.user.create({
+    return prisma.user.create({
       data: {
         username: input.username,
         password: input.password,
@@ -30,7 +30,7 @@ export default class PostgreSQLUserRepository implements UserRepository {
   }
 
   async findUserByUsername(username: string): Promise<User | null> {
-    return prismaHelper.prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         username
       },
@@ -49,7 +49,7 @@ export default class PostgreSQLUserRepository implements UserRepository {
     userId: number,
     accessToken: string
   ): Promise<User | null> {
-    return prismaHelper.prisma.user.update({
+    return prisma.user.update({
       where: {
         id: userId
       },
@@ -68,7 +68,7 @@ export default class PostgreSQLUserRepository implements UserRepository {
   }
 
   async findUserByAccessToken(accessToken: string): Promise<User | null> {
-    return prismaHelper.prisma.user.findFirst({
+    return prisma.user.findFirst({
       where: {
         accessToken
       },
@@ -84,7 +84,7 @@ export default class PostgreSQLUserRepository implements UserRepository {
   }
 
   async findUserById(userId: number): Promise<User | null> {
-    return prismaHelper.prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         id: userId
       },

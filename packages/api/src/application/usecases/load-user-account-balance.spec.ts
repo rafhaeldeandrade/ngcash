@@ -4,21 +4,9 @@ import {
   LoadUserAccountBalanceInput
 } from '@/domain/usecases/load-user-account-balance'
 import { LoadUserAccountBalanceUseCase } from '@/application/usecases/load-user-account-balance'
-import {
-  AccountRepository,
-  GetBalanceOutput
-} from '@/domain/repositories/account-repository'
+import { AccountRepository } from '@/domain/repositories/account-repository'
 import { UserNotAuthorizedError } from '@/application/errors'
-import { Prisma } from '@prisma/client'
-
-const fakeBalance = faker.datatype.number()
-class AccountRepositoryStub implements AccountRepository {
-  async getBalance(accountId: number): Promise<GetBalanceOutput | null> {
-    return {
-      balance: new Prisma.Decimal(fakeBalance)
-    }
-  }
-}
+import { AccountRepositoryStub, fakeAccount } from '@/utils/test-stubs'
 
 interface SutTypes {
   sut: LoadUserAccountBalance
@@ -83,7 +71,7 @@ describe('LoadUserAccountBalanceUseCase', () => {
     const input = makeFakeInput()
     const balance = await sut.execute(input)
     expect(balance).toEqual({
-      balance: fakeBalance
+      balance: fakeAccount.balance.toNumber()
     })
   })
 })

@@ -13,3 +13,7 @@ export interface Encrypter {
 export interface Decrypter {
   decrypt: (value: string) => Promise<string | null>
 }
+
+export interface DbAdapter {
+  initiateDbTransaction: (queries: any[]) => Promise<any>
+}

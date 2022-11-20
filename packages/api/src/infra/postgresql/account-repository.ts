@@ -3,12 +3,12 @@ import {
   AccountRepository,
   GetBalanceOutput
 } from '@/domain/repositories/account-repository'
-import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
+import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 import { Decimal } from '@prisma/client/runtime'
 
 export class PostgreSQLAccountRepository implements AccountRepository {
   async getBalance(accountId: number): Promise<GetBalanceOutput | null> {
-    return prismaHelper.prisma.account.findUnique({
+    return prisma.account.findUnique({
       where: {
         id: accountId
       },
@@ -19,7 +19,7 @@ export class PostgreSQLAccountRepository implements AccountRepository {
   }
 
   async incrementBalance(accountId: number, amount: Decimal): Promise<Account> {
-    return prismaHelper.prisma.account.update({
+    return prisma.account.update({
       where: {
         id: accountId
       },
@@ -32,7 +32,7 @@ export class PostgreSQLAccountRepository implements AccountRepository {
   }
 
   async decrementBalance(accountId: number, amount: Decimal): Promise<Account> {
-    return prismaHelper.prisma.account.update({
+    return prisma.account.update({
       where: {
         id: accountId
       },

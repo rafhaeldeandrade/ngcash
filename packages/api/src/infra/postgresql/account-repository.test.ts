@@ -1,25 +1,21 @@
 import { faker } from '@faker-js/faker'
-import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
+import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 import { PostgreSQLAccountRepository } from '@/infra/postgresql/account-repository'
 import { Prisma } from '@prisma/client'
 
 describe('PostgreSQLAccountRepository.getBalance', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.user.deleteMany()
-    await prismaHelper.prisma.account.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return the correct balance when account is found', async () => {
     const balance = new Prisma.Decimal(faker.datatype.number())
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance
       }
@@ -42,23 +38,19 @@ describe('PostgreSQLAccountRepository.getBalance', () => {
 })
 
 describe('PostgreSQLAccountRepository.incrementBalance', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   beforeEach(async () => {
-    await prismaHelper.prisma.user.deleteMany()
-    await prismaHelper.prisma.account.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return the correct account with updated balance when it works', async () => {
     const currentBalance = new Prisma.Decimal(faker.datatype.number())
     const balanceToIncrement = new Prisma.Decimal(faker.datatype.number())
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: currentBalance
       }
@@ -85,17 +77,13 @@ describe('PostgreSQLAccountRepository.incrementBalance', () => {
 })
 
 describe('PostgreSQLAccountRepository.decrementBalance', () => {
-  beforeAll(async () => {
-    await prismaHelper.connect()
-  })
-
   afterAll(async () => {
-    await prismaHelper.disconnect()
+    await prisma.$disconnect()
   })
 
   afterEach(async () => {
-    await prismaHelper.prisma.user.deleteMany()
-    await prismaHelper.prisma.account.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return the correct account with updated balance when it works', async () => {
@@ -109,7 +97,7 @@ describe('PostgreSQLAccountRepository.decrementBalance', () => {
         max: 999
       })
     )
-    const account = await prismaHelper.prisma.account.create({
+    const account = await prisma.account.create({
       data: {
         balance: currentBalance
       }

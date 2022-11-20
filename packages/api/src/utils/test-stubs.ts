@@ -7,6 +7,11 @@ import {
 } from '@/domain/repositories/user-repository'
 import { SchemaValidate } from '@/presentation/contracts'
 import { Prisma } from '@prisma/client'
+import {
+  AccountRepository,
+  GetBalanceOutput
+} from '@/domain/repositories/account-repository'
+import { Account } from '@/domain/entitities/account'
 
 export class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | void> {
@@ -55,5 +60,35 @@ export class UserRepositoryStub implements UserRepository {
 
   async findUserById(userId: number): Promise<User | null> {
     return fakeUser
+  }
+}
+
+function makeFakeAccount(): Account {
+  return {
+    id: faker.datatype.number(),
+    balance: new Prisma.Decimal(faker.datatype.number())
+  }
+}
+
+export const fakeAccount = makeFakeAccount()
+export class AccountRepositoryStub implements AccountRepository {
+  async getBalance(accountId: number): Promise<GetBalanceOutput | null> {
+    return {
+      balance: new Prisma.Decimal(fakeAccount.balance)
+    }
+  }
+
+  async incrementBalance(
+    accountId: number,
+    amount: Prisma.Decimal
+  ): Promise<Account> {
+    return fakeAccount
+  }
+
+  async decrementBalance(
+    accountId: number,
+    amount: Prisma.Decimal
+  ): Promise<Account> {
+    return fakeAccount
   }
 }
