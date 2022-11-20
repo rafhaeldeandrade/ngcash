@@ -4,7 +4,11 @@ import {
   AddTransaction,
   AddTransactionInput
 } from '@/domain/usecases/add-transaction'
-import { UserRepositoryStub, fakeUser } from '@/utils/test-stubs'
+import {
+  UserRepositoryStub,
+  fakeUser,
+  AccountRepositoryStub
+} from '@/utils/test-stubs'
 import { AddTransactionUseCase } from '@/application/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
 import {
@@ -14,6 +18,9 @@ import {
 } from '../errors'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
 import { Transaction } from '@/domain/entitities/transaction'
+import prismaHelper from '@/infra/postgresql/adapters/prisma-adapter'
+import { DbAdapter } from '../contracts'
+import { AccountRepository } from '@/domain/repositories/account-repository'
 
 export class TransactionRepositoryStub implements TransactionRepository {
   async save(
@@ -30,23 +37,39 @@ export class TransactionRepositoryStub implements TransactionRepository {
   }
 }
 
+function dbAdapter(): DbAdapter {
+  return {
+    initiateDbTransaction: async (queries: any[]) => {
+      return []
+    }
+  }
+}
+
 interface SutTypes {
   sut: AddTransaction
   userRepositoryStub: UserRepository
   transactionRepositoryStub: TransactionRepository
+  accountRepositoryStub: AccountRepository
+  dbAdapterStub: DbAdapter
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
   const transactionRepositoryStub = new TransactionRepositoryStub()
+  const accountRepositoryStub = new AccountRepositoryStub()
+  const dbAdapterStub = dbAdapter()
   const sut = new AddTransactionUseCase(
     userRepositoryStub,
-    transactionRepositoryStub
+    accountRepositoryStub,
+    transactionRepositoryStub,
+    dbAdapterStub
   )
   return {
     sut,
     userRepositoryStub,
-    transactionRepositoryStub
+    transactionRepositoryStub,
+    accountRepositoryStub,
+    dbAdapterStub
   }
 }
 
@@ -121,33 +144,29 @@ describe('AddTransactionUseCase', () => {
     await expect(promise).rejects.toThrow(new BalanceIsNotEnoughError())
   })
 
-  it('it should call transactionRepositoy.save with the correct values', async () => {
-    const { sut, userRepositoryStub, transactionRepositoryStub } = makeSut()
-    const userToCashOutId = faker.datatype.number()
-    const userToCashInId = faker.datatype.number()
-    jest.spyOn(userRepositoryStub, 'findUserById').mockResolvedValueOnce({
-      ...fakeUser,
-      account: {
-        ...fakeUser.account,
-        id: userToCashOutId
-      }
-    })
-    jest.spyOn(userRepositoryStub, 'findUserByUsername').mockResolvedValueOnce({
-      ...fakeUser,
-      account: {
-        ...fakeUser.account,
-        id: userToCashInId
-      }
-    })
-    const saveSpy = jest.spyOn(transactionRepositoryStub, 'save')
+  it('should call dbAdapter.initiateDbTransaction with the correct values', async () => {
+    const {
+      sut,
+      dbAdapterStub,
+      accountRepositoryStub,
+      transactionRepositoryStub
+    } = makeSut()
+    const initiateDbTransactionSpy = jest.spyOn(
+      dbAdapterStub,
+      'initiateDbTransaction'
+    )
     const input = makeFakeInput()
     await sut.execute(input)
-    expect(saveSpy).toHaveBeenCalledTimes(1)
-    expect(saveSpy).toHaveBeenCalledWith(
-      userToCashOutId,
-      userToCashInId,
-      input.amount
-    )
+    expect(initiateDbTransactionSpy).toHaveBeenCalledTimes(1)
+    expect(initiateDbTransactionSpy).toHaveBeenCalledWith([
+      accountRepositoryStub.decrementBalance(input.authAccountId, input.amount),
+      accountRepositoryStub.incrementBalance(fakeUser.id, input.amount),
+      transactionRepositoryStub.save(
+        input.authAccountId,
+        fakeUser.id,
+        input.amount
+      )
+    ])
   })
 
   it('should return the correct values on success', async () => {
