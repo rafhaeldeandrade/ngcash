@@ -1,3 +1,4 @@
+import { UserNotAuthorizedError } from '@/application/errors'
 import {
   AddTransaction,
   AddTransactionInput,
@@ -7,6 +8,7 @@ import { SchemaValidateStub } from '@/utils/test-stubs'
 import { faker } from '@faker-js/faker'
 import { Prisma } from '@prisma/client'
 import { HttpRequest, SchemaValidate } from '../contracts'
+import { InvalidParamError } from '../errors'
 import { AddTransactionController } from './add-transaction'
 
 const fakeUseCaseOutput = {
@@ -46,7 +48,7 @@ function makeFakeRequest(): HttpRequest {
       usernameToCashIn: faker.internet.userName(),
       amount: new Prisma.Decimal(faker.datatype.number()),
       user: {
-        authAccountId: faker.datatype.number()
+        accountId: faker.datatype.number()
       }
     }
   }
@@ -104,7 +106,22 @@ describe('AddTransactionController', () => {
     expect(executeSpy).toHaveBeenCalledWith({
       usernameToCashIn: httpRequest.body?.usernameToCashIn,
       amount: new Prisma.Decimal(httpRequest.body?.amount),
-      authAccountId: httpRequest.body?.user?.authAccountId
+      authAccountId: httpRequest.body?.user?.accountId
+    })
+  })
+
+  it('should return 400 if addTransactionUseCase.execute throws InvalidParamError', async () => {
+    const { sut, addTransactionUseCaseStub } = makeSut()
+    const httpRequest = makeFakeRequest()
+    jest
+      .spyOn(addTransactionUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new InvalidParamError('any_field'))
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: {
+        message: 'any_field is invalid'
+      }
     })
   })
 })
