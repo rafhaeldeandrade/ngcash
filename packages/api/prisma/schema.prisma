@@ -10,7 +10,7 @@ datasource db {
 
 model Account {
   id          Int          @id @default(autoincrement())
-  balance     Decimal      @db.Decimal(19, 5)
+  balance     Decimal      @db.Decimal(19, 4)
   user        User?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -31,7 +31,7 @@ model Transaction {
   id                Int      @id @default(autoincrement())
   debitedAccountId  Int      @unique
   creditedAccountId Int      @unique
-  amount            Decimal  @db.Decimal(19, 5)
+  amount            Decimal  @db.Decimal(19, 4)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
