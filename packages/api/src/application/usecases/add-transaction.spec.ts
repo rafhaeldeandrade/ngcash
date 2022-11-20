@@ -7,7 +7,7 @@ import {
 import { UserRepositoryStub, fakeUser } from '@/utils/test-stubs'
 import { AddTransactionUseCase } from '@/application/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
-import { UserNotAuthorizedError } from '../errors'
+import { UserNotAuthorizedError, UserNotFoundError } from '../errors'
 
 interface SutTypes {
   sut: AddTransaction
@@ -42,6 +42,16 @@ describe('AddTransactionUseCase', () => {
     await sut.execute(input)
     expect(findUserByUsernameSpy).toHaveBeenCalledTimes(1)
     expect(findUserByUsernameSpy).toHaveBeenCalledWith(input.usernameToCashIn)
+  })
+
+  it('should throw UserNotFoundError if user was not found by userRepository.findUserByUsername', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest
+      .spyOn(userRepositoryStub, 'findUserByUsername')
+      .mockResolvedValueOnce(null)
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new UserNotFoundError())
   })
 
   it('should call userRepository.findUserById with the correct value', async () => {

@@ -48,4 +48,8 @@ export class UserRepositoryStub implements UserRepository {
   async findUserByAccessToken(accessToken: string): Promise<User | null> {
     return fakeUser
   }
+
+  async findUserById(userId: number): Promise<User | null> {
+    return fakeUser
+  }
 }
