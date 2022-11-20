@@ -78,4 +78,19 @@ describe('AddTransactionUseCase', () => {
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new UserNotAuthorizedError())
   })
+
+  it('should throw Error if balance is not enough', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest.spyOn(userRepositoryStub, 'findUserById').mockResolvedValueOnce({
+      ...fakeUser,
+      account: {
+        ...fakeUser.account,
+        balance: new Prisma.Decimal(0)
+      }
+    })
+    const input = makeFakeInput()
+    input.amount = new Prisma.Decimal(1)
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new Error('Balance is not enough'))
+  })
 })

@@ -23,7 +23,11 @@ export function makeFakeUser(): User {
     accessToken: faker.datatype.uuid(),
     account: {
       id: faker.datatype.number(),
-      balance: new Prisma.Decimal(faker.datatype.number())
+      balance: new Prisma.Decimal(
+        faker.datatype.number({
+          min: 1000000000000
+        })
+      )
     }
   }
 }
