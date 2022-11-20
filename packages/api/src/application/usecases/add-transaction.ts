@@ -16,10 +16,13 @@ export class AddTransactionUseCase implements AddTransaction {
       usernameToCashIn
     )
     if (!userToCashIn) throw new UserNotFoundError()
-    const user = await this.userRepository.findUserById(authAccountId)
-    if (!user) throw new UserNotFoundError()
-    if (user?.username === usernameToCashIn) {
+    const userToCashOut = await this.userRepository.findUserById(authAccountId)
+    if (!userToCashOut) throw new UserNotFoundError()
+    if (userToCashOut?.username === usernameToCashIn) {
       throw new UserNotAuthorizedError()
+    }
+    if (userToCashOut?.account.balance.lt(input.amount)) {
+      throw new Error('Balance is not enough')
     }
     return {
       from: 'any',
