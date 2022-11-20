@@ -17,6 +17,7 @@ export class AddTransactionUseCase implements AddTransaction {
     )
     if (!userToCashIn) throw new UserNotFoundError()
     const user = await this.userRepository.findUserById(authAccountId)
+    if (!user) throw new UserNotFoundError()
     if (user?.username === usernameToCashIn) {
       throw new UserNotAuthorizedError()
     }
