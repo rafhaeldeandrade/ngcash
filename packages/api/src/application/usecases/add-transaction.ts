@@ -38,9 +38,9 @@ export class AddTransactionUseCase implements AddTransaction {
       new Prisma.Decimal(amount)
     )
     return {
-      from: 'any',
-      to: 'any',
-      amountTransacted: new Prisma.Decimal(0)
+      from: userToCashOut.username,
+      to: userToCashIn.username,
+      amountTransacted: input.amount
     }
   }
 }
