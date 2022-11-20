@@ -142,4 +142,15 @@ describe('AddTransactionUseCase', () => {
       input.amount
     )
   })
+
+  it('should return the correct values on success', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const result = await sut.execute(input)
+    expect(result).toEqual({
+      amountTransacted: input.amount,
+      from: fakeUser.username,
+      to: fakeUser.username
+    })
+  })
 })
