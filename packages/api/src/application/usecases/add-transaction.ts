@@ -32,7 +32,7 @@ export class AddTransactionUseCase implements AddTransaction {
     if (userToCashOut?.account.balance.lt(input.amount)) {
       throw new BalanceIsNotEnoughError()
     }
-    await this.transactionRepositoy.saveTransaction(
+    await this.transactionRepositoy.save(
       userToCashOut?.account.id,
       userToCashIn?.account.id,
       new Prisma.Decimal(amount)

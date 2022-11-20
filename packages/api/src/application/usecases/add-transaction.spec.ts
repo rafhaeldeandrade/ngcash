@@ -13,10 +13,20 @@ import {
   UserNotFoundError
 } from '../errors'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
+import { Transaction } from '@/domain/entitities/transaction'
 
 export class TransactionRepositoryStub implements TransactionRepository {
-  async saveTransaction(fromId: number, toId: number, amount: Prisma.Decimal) {
-    return Promise.resolve()
+  async save(
+    fromId: number,
+    toId: number,
+    amount: Prisma.Decimal
+  ): Promise<Transaction> {
+    return {
+      id: faker.datatype.number(),
+      debitedAccountId: fromId,
+      creditedAccountId: toId,
+      amount: new Prisma.Decimal(amount)
+    }
   }
 }
 
@@ -111,7 +121,7 @@ describe('AddTransactionUseCase', () => {
     await expect(promise).rejects.toThrow(new BalanceIsNotEnoughError())
   })
 
-  it('it should call transactionRepositoy.saveTransaction with the correct values', async () => {
+  it('it should call transactionRepositoy.save with the correct values', async () => {
     const { sut, userRepositoryStub, transactionRepositoryStub } = makeSut()
     const userToCashOutId = faker.datatype.number()
     const userToCashInId = faker.datatype.number()
@@ -129,14 +139,11 @@ describe('AddTransactionUseCase', () => {
         id: userToCashInId
       }
     })
-    const saveTransactionSpy = jest.spyOn(
-      transactionRepositoryStub,
-      'saveTransaction'
-    )
+    const saveSpy = jest.spyOn(transactionRepositoryStub, 'save')
     const input = makeFakeInput()
     await sut.execute(input)
-    expect(saveTransactionSpy).toHaveBeenCalledTimes(1)
-    expect(saveTransactionSpy).toHaveBeenCalledWith(
+    expect(saveSpy).toHaveBeenCalledTimes(1)
+    expect(saveSpy).toHaveBeenCalledWith(
       userToCashOutId,
       userToCashInId,
       input.amount
