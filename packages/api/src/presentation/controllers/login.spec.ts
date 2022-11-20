@@ -4,12 +4,7 @@ import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
 import { LoginController } from '@/presentation/controllers/login'
 import { Login, LoginInput, LoginOutput } from '@/domain/usecases/login'
 import { WrongCredentialsError } from '@/application/errors'
-
-class SchemaValidateStub implements SchemaValidate {
-  async validate(input: any): Promise<Error | void> {
-    return Promise.resolve()
-  }
-}
+import { SchemaValidateStub } from '@/utils/test-stubs'
 
 const fakeUseCaseOutput = {
   accessToken: faker.datatype.uuid(),
