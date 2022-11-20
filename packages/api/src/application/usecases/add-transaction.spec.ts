@@ -7,7 +7,11 @@ import {
 import { UserRepositoryStub, fakeUser } from '@/utils/test-stubs'
 import { AddTransactionUseCase } from '@/application/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
-import { UserNotAuthorizedError, UserNotFoundError } from '../errors'
+import {
+  BalanceIsNotEnoughError,
+  UserNotAuthorizedError,
+  UserNotFoundError
+} from '../errors'
 
 interface SutTypes {
   sut: AddTransaction
@@ -79,7 +83,7 @@ describe('AddTransactionUseCase', () => {
     await expect(promise).rejects.toThrow(new UserNotAuthorizedError())
   })
 
-  it('should throw Error if balance is not enough', async () => {
+  it('should throw BalanceIsNotEnoughError if balance is not enough', async () => {
     const { sut, userRepositoryStub } = makeSut()
     jest.spyOn(userRepositoryStub, 'findUserById').mockResolvedValueOnce({
       ...fakeUser,
@@ -91,6 +95,6 @@ describe('AddTransactionUseCase', () => {
     const input = makeFakeInput()
     input.amount = new Prisma.Decimal(1)
     const promise = sut.execute(input)
-    await expect(promise).rejects.toThrow(new Error('Balance is not enough'))
+    await expect(promise).rejects.toThrow(new BalanceIsNotEnoughError())
   })
 })
