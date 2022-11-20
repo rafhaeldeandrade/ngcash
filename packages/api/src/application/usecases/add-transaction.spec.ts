@@ -12,18 +12,31 @@ import {
   UserNotAuthorizedError,
   UserNotFoundError
 } from '../errors'
+import { TransactionRepository } from '@/domain/repositories/transaction-repository'
+
+export class TransactionRepositoryStub implements TransactionRepository {
+  async saveTransaction(fromId: number, toId: number, amount: Prisma.Decimal) {
+    return Promise.resolve()
+  }
+}
 
 interface SutTypes {
   sut: AddTransaction
   userRepositoryStub: UserRepository
+  transactionRepositoryStub: TransactionRepository
 }
 
 function makeSut(): SutTypes {
   const userRepositoryStub = new UserRepositoryStub()
-  const sut = new AddTransactionUseCase(userRepositoryStub)
+  const transactionRepositoryStub = new TransactionRepositoryStub()
+  const sut = new AddTransactionUseCase(
+    userRepositoryStub,
+    transactionRepositoryStub
+  )
   return {
     sut,
-    userRepositoryStub
+    userRepositoryStub,
+    transactionRepositoryStub
   }
 }
 
@@ -96,5 +109,37 @@ describe('AddTransactionUseCase', () => {
     input.amount = new Prisma.Decimal(1)
     const promise = sut.execute(input)
     await expect(promise).rejects.toThrow(new BalanceIsNotEnoughError())
+  })
+
+  it('it should call transactionRepositoy.saveTransaction with the correct values', async () => {
+    const { sut, userRepositoryStub, transactionRepositoryStub } = makeSut()
+    const userToCashOutId = faker.datatype.number()
+    const userToCashInId = faker.datatype.number()
+    jest.spyOn(userRepositoryStub, 'findUserById').mockResolvedValueOnce({
+      ...fakeUser,
+      account: {
+        ...fakeUser.account,
+        id: userToCashOutId
+      }
+    })
+    jest.spyOn(userRepositoryStub, 'findUserByUsername').mockResolvedValueOnce({
+      ...fakeUser,
+      account: {
+        ...fakeUser.account,
+        id: userToCashInId
+      }
+    })
+    const saveTransactionSpy = jest.spyOn(
+      transactionRepositoryStub,
+      'saveTransaction'
+    )
+    const input = makeFakeInput()
+    await sut.execute(input)
+    expect(saveTransactionSpy).toHaveBeenCalledTimes(1)
+    expect(saveTransactionSpy).toHaveBeenCalledWith(
+      userToCashOutId,
+      userToCashInId,
+      input.amount
+    )
   })
 })
