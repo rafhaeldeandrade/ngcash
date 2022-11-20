@@ -72,14 +72,14 @@ describe('LoadUserUseCase', () => {
     expect(findUserByTokenSpy).toHaveBeenCalledWith(input)
   })
 
-  it('should throw UserNotFoundError if userRepository.findUserByAccessToken returns null', async () => {
+  it('should throw InvalidTokenError if userRepository.findUserByAccessToken returns null', async () => {
     const { sut, userRepositoryStub } = makeSut()
     jest
       .spyOn(userRepositoryStub, 'findUserByAccessToken')
       .mockResolvedValueOnce(null)
     const input = makeFakeInput()
     const promise = sut.execute(input)
-    await expect(promise).rejects.toThrow(new UserNotFoundError())
+    await expect(promise).rejects.toThrow(new InvalidTokenError())
   })
 
   it('should throw if userRepository.findUserByAccessToken throws', async () => {
