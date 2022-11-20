@@ -39,3 +39,10 @@ export class InvalidTokenError extends Error {
     this.name = 'InvalidTokenError'
   }
 }
+
+export class BalanceIsNotEnoughError extends Error {
+  constructor() {
+    super('Balance is not enough')
+    this.name = 'BalanceIsNotEnoughError'
+  }
+}

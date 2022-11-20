@@ -5,7 +5,11 @@ import {
   AddTransactionOutput
 } from '@/domain/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
-import { UserNotAuthorizedError, UserNotFoundError } from '../errors'
+import {
+  BalanceIsNotEnoughError,
+  UserNotAuthorizedError,
+  UserNotFoundError
+} from '@/application/errors'
 
 export class AddTransactionUseCase implements AddTransaction {
   constructor(private readonly userRepository: UserRepository) {}
@@ -22,7 +26,7 @@ export class AddTransactionUseCase implements AddTransaction {
       throw new UserNotAuthorizedError()
     }
     if (userToCashOut?.account.balance.lt(input.amount)) {
-      throw new Error('Balance is not enough')
+      throw new BalanceIsNotEnoughError()
     }
     return {
       from: 'any',
