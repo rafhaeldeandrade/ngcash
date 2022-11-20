@@ -63,6 +63,14 @@ describe('AddTransactionUseCase', () => {
     expect(findUserByIdSpy).toHaveBeenCalledWith(input.authAccountId)
   })
 
+  it('should throw UserNotFoundError if user was not found by userRepository.findUserById', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest.spyOn(userRepositoryStub, 'findUserById').mockResolvedValueOnce(null)
+    const input = makeFakeInput()
+    const promise = sut.execute(input)
+    await expect(promise).rejects.toThrow(new UserNotFoundError())
+  })
+
   it('should throw UserNotAuthorizedError if username returned from userRepository.findUserById is the same as the usernameToCashIn', async () => {
     const { sut } = makeSut()
     const input = makeFakeInput()
