@@ -3,26 +3,29 @@ import {
   SaveNewUserInput,
   UserRepository
 } from '@/domain/repositories/user-repository'
+import { Prisma } from '@prisma/client'
 import prismaHelper from './helpers/prisma-helper'
 
 export default class PostgreSQLUserRepository implements UserRepository {
   async saveNewUser(input: SaveNewUserInput): Promise<User> {
-    return await prismaHelper.prisma.$transaction(async (tx) => {
-      const account = await tx.account.create({
-        data: {
-          balance: 100
+    return await prismaHelper.prisma.user.create({
+      data: {
+        username: input.username,
+        password: input.password,
+        account: {
+          create: {
+            balance: new Prisma.Decimal(100)
+          }
         }
-      })
-
-      const user = await tx.user.create({
-        data: {
-          username: input.username,
-          password: input.password,
-          accountId: account.id
+      },
+      include: {
+        account: {
+          select: {
+            id: true,
+            balance: true
+          }
         }
-      })
-
-      return user
+      }
     })
   }
 
@@ -30,6 +33,14 @@ export default class PostgreSQLUserRepository implements UserRepository {
     return await prismaHelper.prisma.user.findUnique({
       where: {
         username
+      },
+      include: {
+        account: {
+          select: {
+            id: true,
+            balance: true
+          }
+        }
       }
     })
   }
@@ -44,6 +55,14 @@ export default class PostgreSQLUserRepository implements UserRepository {
       },
       data: {
         accessToken
+      },
+      include: {
+        account: {
+          select: {
+            id: true,
+            balance: true
+          }
+        }
       }
     })
   }
@@ -52,6 +71,14 @@ export default class PostgreSQLUserRepository implements UserRepository {
     return await prismaHelper.prisma.user.findFirst({
       where: {
         accessToken
+      },
+      include: {
+        account: {
+          select: {
+            id: true,
+            balance: true
+          }
+        }
       }
     })
   }

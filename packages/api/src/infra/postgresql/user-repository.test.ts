@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 
 import prismaHelper from '@/infra/postgresql/helpers/prisma-helper'
 import PostgreSQLUserRepository from './user-repository'
+import { Prisma } from '@prisma/client'
 
 describe('PostgreSQLUserRepository.findUserByUsername', () => {
   beforeAll(async () => {
@@ -21,7 +22,7 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
     const password = faker.internet.password()
     const account = await prismaHelper.prisma.account.create({
       data: {
-        balance: 100
+        balance: new Prisma.Decimal(100)
       }
     })
     const user = await prismaHelper.prisma.user.create({
@@ -35,7 +36,13 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
     const sut = new PostgreSQLUserRepository()
     const result = await sut.findUserByUsername(username)
 
-    expect(result).toEqual(user)
+    expect(result).toEqual({
+      ...user,
+      account: {
+        id: account.id,
+        balance: account.balance
+      }
+    })
   })
 
   it('should return null when a user is not found', async () => {
@@ -148,7 +155,13 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
     const sut = new PostgreSQLUserRepository()
     const result = await sut.findUserByAccessToken(accessToken)
 
-    expect(result).toEqual(user)
+    expect(result).toEqual({
+      ...user,
+      account: {
+        id: account.id,
+        balance: account.balance
+      }
+    })
   })
 
   it('should return null when user is not found', async () => {
