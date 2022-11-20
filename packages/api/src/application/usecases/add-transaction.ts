@@ -10,12 +10,16 @@ import {
   UserNotAuthorizedError,
   UserNotFoundError
 } from '@/application/errors'
+import { TransactionRepository } from '@/domain/repositories/transaction-repository'
 
 export class AddTransactionUseCase implements AddTransaction {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly transactionRepositoy: TransactionRepository
+  ) {}
 
   async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
-    const { authAccountId, usernameToCashIn } = input
+    const { authAccountId, usernameToCashIn, amount } = input
     const userToCashIn = await this.userRepository.findUserByUsername(
       usernameToCashIn
     )
@@ -28,6 +32,11 @@ export class AddTransactionUseCase implements AddTransaction {
     if (userToCashOut?.account.balance.lt(input.amount)) {
       throw new BalanceIsNotEnoughError()
     }
+    await this.transactionRepositoy.saveTransaction(
+      userToCashOut?.account.id,
+      userToCashIn?.account.id,
+      new Prisma.Decimal(amount)
+    )
     return {
       from: 'any',
       to: 'any',
