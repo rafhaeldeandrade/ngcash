@@ -107,4 +107,19 @@ describe('LoadTransactionsController', () => {
       accountId: httpRequest.body.user?.accountId
     })
   })
+
+  it('should return 500 if loadTransactionsUseCase.execute throws any error but InvalidParamError', async () => {
+    const { sut, loadTransactionsUseCaseStub } = makeSut()
+    jest
+      .spyOn(loadTransactionsUseCaseStub, 'execute')
+      .mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      body: {
+        message: 'Internal server error'
+      }
+    })
+  })
 })
