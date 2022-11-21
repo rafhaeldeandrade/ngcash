@@ -8,7 +8,14 @@ import { PostgreSQLTransactionRepository } from '@/infra/postgresql/transaction-
 
 export function makeLoadTransactionsController(): Controller {
   const zodSchema = z.object({
-    page: z.number().optional(),
+    page: z.preprocess((input) => {
+      const processed = z
+        .string()
+        .regex(/^\d+$/)
+        .transform(Number)
+        .safeParse(input)
+      return processed.success ? processed.data : input
+    }, z.number().min(1)),
     transactionType: z.enum(['all', 'cashIn', 'cashOut']),
     date: z
       .preprocess((arg) => {
