@@ -46,4 +46,19 @@ describe('LoadTransactionsUseCase', () => {
       take: 20
     })
   })
+
+  it('should call transactionRepository.findAll with the correct values when transactionType is cashIn', async () => {
+    const { sut, transactionRepositoryStub } = makeSut()
+    const findAllSpy = jest.spyOn(transactionRepositoryStub, 'findAll')
+    const input = makeFakeInput()
+    input.transactionType = 'cashIn'
+    await sut.execute(input)
+    expect(findAllSpy).toHaveBeenCalledTimes(1)
+    expect(findAllSpy).toHaveBeenCalledWith({
+      createdAt: input.date,
+      debitedAccountId: input.accountId,
+      skip: input.page - 1 * 20,
+      take: 20
+    })
+  })
 })
