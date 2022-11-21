@@ -38,6 +38,12 @@ export class LoadTransactionsUseCase implements LoadTransactions {
         skip,
         take
       })
+      totalTransactions = await this.transactionRepository.count({
+        createdAt: date,
+        creditedAccountId: accountId,
+        skip,
+        take
+      })
     }
     if (transactionType.toLowerCase() === 'cashout') {
       transactions = await this.transactionRepository.findAll({
