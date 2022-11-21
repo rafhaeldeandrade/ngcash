@@ -13,7 +13,7 @@ export function makeAddTransactionController(): Controller {
   const zodSchema = z.object({
     usernameToCashIn: z.string(),
     amount: z.number(),
-    authAccountId: z.number()
+    authUserId: z.number()
   })
   const zodSchemaValidate = new ZodSchemaValidate(zodSchema)
   const postgreSQLUserRepository = new PostgreSQLUserRepository()
