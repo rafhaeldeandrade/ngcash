@@ -95,7 +95,7 @@ export class AccountRepositoryStub implements AccountRepository {
   }
 }
 
-const fakeTransaction = {
+export const fakeTransaction = {
   id: faker.datatype.number(),
   debitedAccountId: faker.datatype.number(),
   creditedAccountId: faker.datatype.number(),

@@ -5,7 +5,7 @@ import {
 } from '@/domain/usecases/load-transactions'
 import { LoadTransactionsUseCase } from '@/application/usecases/load-transactions'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
-import { TransactionRepositoryStub } from '@/utils/test-stubs'
+import { fakeTransaction, TransactionRepositoryStub } from '@/utils/test-stubs'
 
 interface SutTypes {
   sut: LoadTransactions
@@ -120,6 +120,16 @@ describe('LoadTransactionsUseCase', () => {
       debitedAccountId: input.accountId,
       skip: input.page - 1 * 20,
       take: 20
+    })
+  })
+
+  it('should return the correct values on success', async () => {
+    const { sut } = makeSut()
+    const input = makeFakeInput()
+    const result = await sut.execute(input)
+    expect(result).toEqual({
+      transactions: [fakeTransaction],
+      totalTransactions: 1
     })
   })
 })
