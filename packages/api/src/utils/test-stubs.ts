@@ -113,4 +113,8 @@ export class TransactionRepositoryStub implements TransactionRepository {
   async findAll() {
     return [fakeTransaction]
   }
+
+  async count() {
+    return 1
+  }
 }
