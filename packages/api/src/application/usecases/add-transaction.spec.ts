@@ -7,7 +7,8 @@ import {
 import {
   UserRepositoryStub,
   fakeUser,
-  AccountRepositoryStub
+  AccountRepositoryStub,
+  TransactionRepositoryStub
 } from '@/utils/test-stubs'
 import { AddTransactionUseCase } from '@/application/usecases/add-transaction'
 import { Prisma } from '@prisma/client'
@@ -17,25 +18,8 @@ import {
   UserNotFoundError
 } from '../errors'
 import { TransactionRepository } from '@/domain/repositories/transaction-repository'
-import { Transaction } from '@/domain/entitities/transaction'
-import prismaHelper from '@/infra/postgresql/adapters/prisma-adapter'
-import { DbAdapter } from '../contracts'
+import { DbAdapter } from '@/application/contracts'
 import { AccountRepository } from '@/domain/repositories/account-repository'
-
-export class TransactionRepositoryStub implements TransactionRepository {
-  async save(
-    fromId: number,
-    toId: number,
-    amount: Prisma.Decimal
-  ): Promise<Transaction> {
-    return {
-      id: faker.datatype.number(),
-      debitedAccountId: fromId,
-      creditedAccountId: toId,
-      amount: new Prisma.Decimal(amount)
-    }
-  }
-}
 
 function dbAdapter(): DbAdapter {
   return {

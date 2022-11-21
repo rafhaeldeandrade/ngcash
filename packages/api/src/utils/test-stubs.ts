@@ -12,6 +12,8 @@ import {
   GetBalanceOutput
 } from '@/domain/repositories/account-repository'
 import { Account } from '@/domain/entitities/account'
+import { TransactionRepository } from '@/domain/repositories/transaction-repository'
+import { Transaction } from '@/domain/entitities/transaction'
 
 export class SchemaValidateStub implements SchemaValidate {
   async validate(input: any): Promise<Error | void> {
@@ -90,5 +92,25 @@ export class AccountRepositoryStub implements AccountRepository {
     amount: Prisma.Decimal
   ): Promise<Account> {
     return fakeAccount
+  }
+}
+
+const fakeTransaction = {
+  id: faker.datatype.number(),
+  debitedAccountId: faker.datatype.number(),
+  creditedAccountId: faker.datatype.number(),
+  amount: new Prisma.Decimal(faker.datatype.number())
+}
+export class TransactionRepositoryStub implements TransactionRepository {
+  async save(
+    fromId: number,
+    toId: number,
+    amount: Prisma.Decimal
+  ): Promise<Transaction> {
+    return fakeTransaction
+  }
+
+  async findAll() {
+    return [fakeTransaction]
   }
 }
