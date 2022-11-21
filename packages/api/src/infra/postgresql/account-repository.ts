@@ -18,7 +18,7 @@ export class PostgreSQLAccountRepository implements AccountRepository {
     })
   }
 
-  async incrementBalance(accountId: number, amount: Decimal): Promise<Account> {
+  incrementBalance(accountId: number, amount: Decimal): any {
     return prisma.account.update({
       where: {
         id: accountId
@@ -31,7 +31,7 @@ export class PostgreSQLAccountRepository implements AccountRepository {
     })
   }
 
-  async decrementBalance(accountId: number, amount: Decimal): Promise<Account> {
+  decrementBalance(accountId: number, amount: Decimal): any {
     return prisma.account.update({
       where: {
         id: accountId

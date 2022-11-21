@@ -24,6 +24,8 @@ export const errorAdapter = (error: Error): HttpResponse => {
       return badRequest(error)
     case 'InvalidParamError':
       return badRequest(error)
+    case 'BalanceIsNotEnoughError':
+      return badRequest(error)
     default:
       return internalServerError()
   }
