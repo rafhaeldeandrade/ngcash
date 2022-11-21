@@ -5,7 +5,7 @@ import {
   HttpResponse,
   SchemaValidate
 } from '@/presentation/contracts'
-import { badRequest } from '@/presentation/helpers/http-helper'
+import { badRequest, ok } from '@/presentation/helpers/http-helper'
 import { errorAdapter } from '../helpers/error-adapter'
 
 export class LoadTransactionsController implements Controller {
@@ -19,16 +19,13 @@ export class LoadTransactionsController implements Controller {
       const { query, body } = httpRequest
       const error = await this.schemaValidate.validate(query)
       if (error) return badRequest(error)
-      await this.loadTransactionsUseCase.execute({
+      const result = await this.loadTransactionsUseCase.execute({
         page: query.page,
         transactionType: query.transactionType,
         date: query.date,
         accountId: body?.user?.accountId
       })
-      return {
-        statusCode: 200,
-        body: {}
-      }
+      return ok(result)
     } catch (e) {
       return errorAdapter(e as Error)
     }
