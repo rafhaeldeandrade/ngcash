@@ -12,6 +12,7 @@ export class LoadTransactionsUseCase implements LoadTransactions {
   async execute(input: LoadTransactionsInput): Promise<LoadTransactionsOutput> {
     const { transactionType, accountId, page, date } = input
     let transactions: Transaction[] = []
+    const totalTransactions = 0
     const skip = page - 1 * 20
     const take = 20
     if (transactionType.toLowerCase() === 'all') {
@@ -26,6 +27,14 @@ export class LoadTransactionsUseCase implements LoadTransactions {
     if (transactionType.toLowerCase() === 'cashin') {
       transactions = await this.transactionRepository.findAll({
         createdAt: date,
+        creditedAccountId: accountId,
+        skip,
+        take
+      })
+    }
+    if (transactionType.toLowerCase() === 'cashout') {
+      transactions = await this.transactionRepository.findAll({
+        createdAt: date,
         debitedAccountId: accountId,
         skip,
         take
@@ -33,7 +42,7 @@ export class LoadTransactionsUseCase implements LoadTransactions {
     }
     return {
       transactions,
-      totalTransactions: 0
+      totalTransactions
     }
   }
 }
