@@ -20,40 +20,38 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
   async findAll(
     input: TransactionRepositoryFindAllInput
   ): Promise<Transaction[]> {
-    const filter: TransactionRepositoryFindAllInput & { OR: any[] } =
-      {} as TransactionRepositoryFindAllInput & { OR: any[] }
+    const filter: any = {}
     const { createdAt, debitedAccountId, creditedAccountId, skip, take } = input
-    if (createdAt) filter.createdAt = input.createdAt
-    if (debitedAccountId) filter.debitedAccountId = input.debitedAccountId
-    if (creditedAccountId) filter.creditedAccountId = input.creditedAccountId
+    if (debitedAccountId) filter.debitedAccountId = debitedAccountId
+    if (creditedAccountId) filter.creditedAccountId = creditedAccountId
     if (debitedAccountId && creditedAccountId) {
       delete filter.creditedAccountId
       delete filter.debitedAccountId
       filter.OR = [{ debitedAccountId }, { creditedAccountId }]
     }
-    if (skip) filter.skip = skip
-    if (take) filter.take = take
+    if (createdAt) filter.createdAt = createdAt
     return await prisma.transaction.findMany({
-      where: filter
+      where: filter,
+      skip,
+      take
     })
   }
 
   async count(input: TransactionRepositoryFindAllInput): Promise<number> {
-    const filter: TransactionRepositoryFindAllInput & { OR: any[] } =
-      {} as TransactionRepositoryFindAllInput & { OR: any[] }
+    const filter: any = {}
     const { createdAt, debitedAccountId, creditedAccountId, skip, take } = input
-    if (createdAt) filter.createdAt = input.createdAt
-    if (debitedAccountId) filter.debitedAccountId = input.debitedAccountId
-    if (creditedAccountId) filter.creditedAccountId = input.creditedAccountId
+    if (debitedAccountId) filter.debitedAccountId = debitedAccountId
+    if (creditedAccountId) filter.creditedAccountId = creditedAccountId
     if (debitedAccountId && creditedAccountId) {
       delete filter.creditedAccountId
       delete filter.debitedAccountId
       filter.OR = [{ debitedAccountId }, { creditedAccountId }]
     }
-    if (skip) filter.skip = skip
-    if (take) filter.take = take
+    if (createdAt) filter.createdAt = createdAt
     return await prisma.transaction.count({
-      where: filter
+      where: filter,
+      skip,
+      take
     })
   }
 }
