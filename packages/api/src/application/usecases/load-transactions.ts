@@ -52,6 +52,12 @@ export class LoadTransactionsUseCase implements LoadTransactions {
         skip,
         take
       })
+      totalTransactions = await this.transactionRepository.count({
+        createdAt: date,
+        debitedAccountId: accountId,
+        skip,
+        take
+      })
     }
     return {
       transactions,
