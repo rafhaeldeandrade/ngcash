@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 
 import { SchemaValidateStub } from '@/utils/test-stubs'
-import { HttpRequest, SchemaValidate } from '../contracts'
-import { LoadTransactionsController } from './load-transactions'
+import { HttpRequest, SchemaValidate } from '@/presentation/contracts'
+import { LoadTransactionsController } from '@/presentation/controllers/load-transactions'
 
 interface SutTypes {
   sut: LoadTransactionsController
@@ -36,5 +36,19 @@ describe('LoadTransactionsController', () => {
     await sut.handle(request)
     expect(validateSpy).toHaveBeenCalledTimes(1)
     expect(validateSpy).toHaveBeenCalledWith(request.query)
+  })
+
+  it('should return 400 if schemaValidate.validate returns an error', async () => {
+    const error = new Error(faker.git.commitMessage())
+    const { sut, schemaValidateStub } = makeSut()
+    jest.spyOn(schemaValidateStub, 'validate').mockResolvedValueOnce(error)
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: {
+        message: error.message
+      }
+    })
   })
 })
