@@ -22,12 +22,12 @@ export class AddTransactionUseCase implements AddTransaction {
   ) {}
 
   async execute(input: AddTransactionInput): Promise<AddTransactionOutput> {
-    const { authAccountId, usernameToCashIn, amount } = input
+    const { authUserId, usernameToCashIn, amount } = input
     const userToCashIn = await this.userRepository.findUserByUsername(
       usernameToCashIn
     )
     if (!userToCashIn) throw new UserNotFoundError()
-    const userToCashOut = await this.userRepository.findUserById(authAccountId)
+    const userToCashOut = await this.userRepository.findUserById(authUserId)
     if (!userToCashOut) throw new UserNotFoundError()
     if (userToCashOut?.username === usernameToCashIn) {
       throw new UserNotAuthorizedError()
@@ -36,8 +36,8 @@ export class AddTransactionUseCase implements AddTransaction {
       throw new BalanceIsNotEnoughError()
     }
     await this.dbAdapter.initiateDbTransaction([
-      this.accountRepository.decrementBalance(userToCashOut.id, amount),
-      this.accountRepository.incrementBalance(userToCashIn.id, amount),
+      this.accountRepository.decrementBalance(userToCashOut.accountId, amount),
+      this.accountRepository.incrementBalance(userToCashIn.accountId, amount),
       this.transactionRepositoy.save(userToCashOut.id, userToCashOut.id, amount)
     ])
     return {

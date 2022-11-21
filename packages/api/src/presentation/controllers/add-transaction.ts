@@ -26,7 +26,7 @@ export class AddTransactionController implements Controller {
       await this.addTransactionUseCase.execute({
         usernameToCashIn: httpRequest.body?.usernameToCashIn,
         amount: new Prisma.Decimal(httpRequest.body?.amount),
-        authAccountId: httpRequest.body?.user?.accountId
+        authUserId: httpRequest.body?.user?.id
       })
       return created({
         message: 'Transaction successfully created'
