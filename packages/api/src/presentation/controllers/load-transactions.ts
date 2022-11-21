@@ -3,14 +3,16 @@ import {
   HttpRequest,
   HttpResponse,
   SchemaValidate
-} from '../contracts'
+} from '@/presentation/contracts'
+import { badRequest } from '@/presentation/helpers/http-helper'
 
 export class LoadTransactionsController implements Controller {
   constructor(private readonly schemaValidate: SchemaValidate) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const { query } = httpRequest
-    await this.schemaValidate.validate(query)
+    const error = await this.schemaValidate.validate(query)
+    if (error) return badRequest(error)
     return {
       statusCode: 200,
       body: {}
