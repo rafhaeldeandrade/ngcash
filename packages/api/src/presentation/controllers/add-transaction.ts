@@ -20,7 +20,7 @@ export class AddTransactionController implements Controller {
       const error = await this.schemaValidate.validate({
         usernameToCashIn: httpRequest.body?.usernameToCashIn,
         amount: httpRequest.body?.amount,
-        authAccountId: httpRequest.body?.user?.accountId
+        authUserId: httpRequest.body?.user?.id
       })
       if (error) return badRequest(error)
       await this.addTransactionUseCase.execute({
