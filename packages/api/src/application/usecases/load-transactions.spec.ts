@@ -78,6 +78,21 @@ describe('LoadTransactionsUseCase', () => {
     })
   })
 
+  it('should call transactionRepository.count with the correct values when transactionType is cashIn', async () => {
+    const { sut, transactionRepositoryStub } = makeSut()
+    const countSpy = jest.spyOn(transactionRepositoryStub, 'count')
+    const input = makeFakeInput()
+    input.transactionType = 'cashIn'
+    await sut.execute(input)
+    expect(countSpy).toHaveBeenCalledTimes(1)
+    expect(countSpy).toHaveBeenCalledWith({
+      createdAt: input.date,
+      creditedAccountId: input.accountId,
+      skip: input.page - 1 * 20,
+      take: 20
+    })
+  })
+
   it('should call transactionRepository.findAll with the correct values when transactionType is cashOut', async () => {
     const { sut, transactionRepositoryStub } = makeSut()
     const findAllSpy = jest.spyOn(transactionRepositoryStub, 'findAll')
