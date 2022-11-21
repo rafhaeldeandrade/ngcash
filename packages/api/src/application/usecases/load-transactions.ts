@@ -13,7 +13,7 @@ export class LoadTransactionsUseCase implements LoadTransactions {
     const { transactionType, accountId, page, date } = input
     let transactions: Transaction[] = []
     let totalTransactions = 0
-    const skip = page - 1 * 20
+    const skip = (page - 1) * 20
     const take = 20
     if (transactionType.toLowerCase() === 'all') {
       transactions = await this.transactionRepository.findAll({
