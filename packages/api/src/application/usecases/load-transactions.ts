@@ -12,11 +12,18 @@ export class LoadTransactionsUseCase implements LoadTransactions {
   async execute(input: LoadTransactionsInput): Promise<LoadTransactionsOutput> {
     const { transactionType, accountId, page, date } = input
     let transactions: Transaction[] = []
-    const totalTransactions = 0
+    let totalTransactions = 0
     const skip = page - 1 * 20
     const take = 20
     if (transactionType.toLowerCase() === 'all') {
       transactions = await this.transactionRepository.findAll({
+        createdAt: date,
+        debitedAccountId: accountId,
+        creditedAccountId: accountId,
+        skip,
+        take
+      })
+      totalTransactions = await this.transactionRepository.count({
         createdAt: date,
         debitedAccountId: accountId,
         creditedAccountId: accountId,

@@ -11,4 +11,5 @@ export type TransactionRepositoryFindAllInput = {
 export interface TransactionRepository {
   save(fromId: number, toId: number, amount: Decimal): Promise<Transaction>
   findAll(input: TransactionRepositoryFindAllInput): Promise<Transaction[]>
+  count(input: TransactionRepositoryFindAllInput): Promise<number>
 }
