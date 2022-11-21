@@ -4,7 +4,7 @@ export type LoadTransactionsInput = {
   accountId: number
   date: Date
   page: number
-  transactionType: 'cashIn' | 'cashOut'
+  transactionType: 'cashIn' | 'cashOut' | 'all'
 }
 
 export type LoadTransactionsOutput = {
