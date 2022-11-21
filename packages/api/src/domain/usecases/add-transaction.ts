@@ -3,7 +3,7 @@ import { Decimal } from '@prisma/client/runtime'
 export type AddTransactionInput = {
   usernameToCashIn: string
   amount: Decimal
-  authAccountId: number
+  authUserId: number
 }
 
 export type AddTransactionOutput = {

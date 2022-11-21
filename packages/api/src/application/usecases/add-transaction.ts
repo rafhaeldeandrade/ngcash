@@ -32,18 +32,18 @@ export class AddTransactionUseCase implements AddTransaction {
     if (userToCashOut?.username === usernameToCashIn) {
       throw new UserNotAuthorizedError()
     }
-    if (userToCashOut?.account.balance.lt(input.amount)) {
+    if (userToCashOut?.account.balance.lt(amount)) {
       throw new BalanceIsNotEnoughError()
     }
     await this.dbAdapter.initiateDbTransaction([
       this.accountRepository.decrementBalance(userToCashOut.accountId, amount),
       this.accountRepository.incrementBalance(userToCashIn.accountId, amount),
-      this.transactionRepositoy.save(userToCashOut.id, userToCashOut.id, amount)
+      this.transactionRepositoy.save(userToCashOut.id, userToCashIn.id, amount)
     ])
     return {
       from: userToCashOut.username,
       to: userToCashIn.username,
-      amountTransacted: input.amount
+      amountTransacted: amount
     }
   }
 }

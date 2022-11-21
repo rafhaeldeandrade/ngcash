@@ -60,7 +60,7 @@ function makeSut(): SutTypes {
 function makeFakeInput(): AddTransactionInput {
   return {
     usernameToCashIn: faker.internet.userName(),
-    authAccountId: faker.datatype.number(),
+    authUserId: faker.datatype.number(),
     amount: new Prisma.Decimal(faker.datatype.number())
   }
 }
@@ -94,7 +94,7 @@ describe('AddTransactionUseCase', () => {
     const input = makeFakeInput()
     await sut.execute(input)
     expect(findUserByIdSpy).toHaveBeenCalledTimes(1)
-    expect(findUserByIdSpy).toHaveBeenCalledWith(input.authAccountId)
+    expect(findUserByIdSpy).toHaveBeenCalledWith(input.authUserId)
   })
 
   it('should throw UserNotFoundError if user was not found by userRepository.findUserById', async () => {
@@ -143,10 +143,10 @@ describe('AddTransactionUseCase', () => {
     await sut.execute(input)
     expect(initiateDbTransactionSpy).toHaveBeenCalledTimes(1)
     expect(initiateDbTransactionSpy).toHaveBeenCalledWith([
-      accountRepositoryStub.decrementBalance(input.authAccountId, input.amount),
-      accountRepositoryStub.incrementBalance(fakeUser.id, input.amount),
+      accountRepositoryStub.decrementBalance(input.authUserId, input.amount),
+      accountRepositoryStub.incrementBalance(fakeUser.accountId, input.amount),
       transactionRepositoryStub.save(
-        input.authAccountId,
+        input.authUserId,
         fakeUser.id,
         input.amount
       )
