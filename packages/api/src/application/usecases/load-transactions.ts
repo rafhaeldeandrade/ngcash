@@ -23,6 +23,14 @@ export class LoadTransactionsUseCase implements LoadTransactions {
         take
       })
     }
+    if (transactionType.toLowerCase() === 'cashin') {
+      transactions = await this.transactionRepository.findAll({
+        createdAt: date,
+        debitedAccountId: accountId,
+        skip,
+        take
+      })
+    }
     return {
       transactions,
       totalTransactions: 0
