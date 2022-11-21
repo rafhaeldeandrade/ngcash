@@ -47,8 +47,7 @@ function makeFakeRequest(): HttpRequest {
       usernameToCashIn: faker.internet.userName(),
       amount: new Prisma.Decimal(faker.datatype.number()),
       user: {
-        id: faker.datatype.number(),
-        accountId: faker.datatype.number()
+        id: faker.datatype.number()
       }
     }
   }
@@ -106,7 +105,7 @@ describe('AddTransactionController', () => {
     expect(executeSpy).toHaveBeenCalledWith({
       usernameToCashIn: httpRequest.body?.usernameToCashIn,
       amount: new Prisma.Decimal(httpRequest.body?.amount),
-      authAccountId: httpRequest.body?.user?.accountId
+      authUserId: httpRequest.body?.user?.id
     })
   })
 
