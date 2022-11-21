@@ -35,7 +35,7 @@ export class AddTransactionUseCase implements AddTransaction {
     if (userToCashOut?.account.balance.lt(input.amount)) {
       throw new BalanceIsNotEnoughError()
     }
-    this.dbAdapter.initiateDbTransaction([
+    await this.dbAdapter.initiateDbTransaction([
       this.accountRepository.decrementBalance(userToCashOut.id, amount),
       this.accountRepository.incrementBalance(userToCashIn.id, amount),
       this.transactionRepositoy.save(userToCashOut.id, userToCashOut.id, amount)

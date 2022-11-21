@@ -7,10 +7,10 @@ import { PostgreSQLTransactionRepository } from '@/infra/postgresql/transaction-
 describe('PostgreSQLTransactionRepository.save', () => {
   afterAll(async () => {
     await prisma.$disconnect()
-    await prisma.transaction.deleteMany()
   })
 
   beforeEach(async () => {
+    await prisma.transaction.deleteMany()
     await prisma.account.deleteMany()
   })
 

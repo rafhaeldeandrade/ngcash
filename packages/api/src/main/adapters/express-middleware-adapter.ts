@@ -11,7 +11,7 @@ export function expressMiddlewareAdapter(middleware: Middleware) {
     if (httpResponse.statusCode !== 200 && httpResponse.statusCode !== 201) {
       return res.status(httpResponse.statusCode).json(httpResponse.body)
     }
-    Object.assign(req, httpResponse)
+    Object.assign(req.body, httpResponse.body)
     next()
   }
 }
