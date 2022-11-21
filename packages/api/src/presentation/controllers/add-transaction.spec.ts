@@ -1,4 +1,3 @@
-import { UserNotAuthorizedError } from '@/application/errors'
 import {
   AddTransaction,
   AddTransactionInput,
@@ -64,7 +63,7 @@ describe('AddTransactionController', () => {
     expect(validateSpy).toHaveBeenCalledWith({
       usernameToCashIn: httpRequest.body?.usernameToCashIn,
       amount: httpRequest.body?.amount,
-      authAccountId: httpRequest.body?.user?.authAccountId
+      authAccountId: httpRequest.body?.user?.accountId
     })
   })
 
