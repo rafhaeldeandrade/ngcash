@@ -25,7 +25,7 @@ export class JWTAdapter implements Encrypter, Decrypter {
   async decrypt(token: string): Promise<string | null> {
     return await new Promise((resolve, reject) => {
       jwt.verify(token, this.secret, (err: Error | null, decoded: any) => {
-        if (err) reject(null)
+        if (err) reject(new Error('Invalid token'))
         resolve(decoded.id)
       })
     })

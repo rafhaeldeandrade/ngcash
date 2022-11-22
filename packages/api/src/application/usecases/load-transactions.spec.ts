@@ -42,8 +42,8 @@ describe('LoadTransactionsUseCase', () => {
       createdAt: input.date,
       debitedAccountId: input.accountId,
       creditedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 
@@ -58,8 +58,8 @@ describe('LoadTransactionsUseCase', () => {
       createdAt: input.date,
       debitedAccountId: input.accountId,
       creditedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 
@@ -73,8 +73,8 @@ describe('LoadTransactionsUseCase', () => {
     expect(findAllSpy).toHaveBeenCalledWith({
       createdAt: input.date,
       creditedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 
@@ -88,8 +88,8 @@ describe('LoadTransactionsUseCase', () => {
     expect(countSpy).toHaveBeenCalledWith({
       createdAt: input.date,
       creditedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 
@@ -103,8 +103,8 @@ describe('LoadTransactionsUseCase', () => {
     expect(findAllSpy).toHaveBeenCalledWith({
       createdAt: input.date,
       debitedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 
@@ -118,8 +118,8 @@ describe('LoadTransactionsUseCase', () => {
     expect(countSpy).toHaveBeenCalledWith({
       createdAt: input.date,
       debitedAccountId: input.accountId,
-      skip: (input.page - 1) * 20,
-      take: 20
+      skip: (input.page - 1) * 10,
+      take: 10
     })
   })
 

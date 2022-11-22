@@ -23,6 +23,7 @@ export class AuthenticationMiddleware implements Middleware {
       const result = await this.loadUserUseCase.execute(
         httpRequest.headers.authorization
       )
+
       return ok({
         user: result
       })

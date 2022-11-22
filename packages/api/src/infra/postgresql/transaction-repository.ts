@@ -37,6 +37,7 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
       select: {
         id: true,
         amount: true,
+        createdAt: true,
         debitedAccount: {
           select: {
             id: true,
@@ -75,9 +76,7 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
     }
     if (createdAt) filter.createdAt = createdAt
     return await prisma.transaction.count({
-      where: filter,
-      skip,
-      take
+      where: filter
     })
   }
 }
