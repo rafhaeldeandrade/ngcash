@@ -97,6 +97,7 @@ export function Login() {
     <LoginContainer>
       <FormSideWrapper>
         <FormSide>
+          <Link to="/">{'<'} Back to home page</Link>
           <FormSideText>Welcome back :)</FormSideText>
           <Form onSubmit={handleSubmit(addAccount)}>
             <>
