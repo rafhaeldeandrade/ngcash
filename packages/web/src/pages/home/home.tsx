@@ -20,6 +20,7 @@ import { SendMoneyCard } from '../../components/home/small-feature-card/send-mon
 import { ReceiveMoneyCard } from '../../components/home/small-feature-card/receive-money-card'
 import { CashbackCard } from '../../components/home/small-feature-card/cashback-card'
 import { LatestUpdatesCard } from '../../components/home/latest-updates-card'
+import { useAuth } from '../../hooks/auth'
 
 export function Home() {
   const [openFeaturesCard, setOpenFeaturesCard] = useState({
@@ -28,6 +29,7 @@ export function Home() {
     cashback: false
   })
   const navigate = useNavigate()
+  const { authed } = useAuth()
 
   function handleOnclick(e: React.MouseEvent<HTMLDivElement>) {
     const { id } = e.target as HTMLDivElement
@@ -37,7 +39,10 @@ export function Home() {
     }))
   }
 
-  function handleSignupBtnClick() {
+  function handleCallToAction() {
+    if (authed) {
+      return navigate('/dashboard')
+    }
     navigate('/signup')
   }
 
@@ -57,8 +62,8 @@ export function Home() {
               phone whenever you want to.
             </OpenAccountText>
             <ButtonAndTextContainer>
-              <OpenAccountButton onClick={handleSignupBtnClick}>
-                Open an account
+              <OpenAccountButton onClick={handleCallToAction}>
+                {authed ? 'Go to dashboard' : 'Open an account'}
               </OpenAccountButton>
               <DownloadAppContainer>
                 <ArrowCircleRightIcon />
