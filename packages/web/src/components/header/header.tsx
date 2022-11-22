@@ -1,11 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Logo } from '../../assets/logo'
-import {
-  getAccessToken,
-  getUsername,
-  removeAllCookies
-} from '../../services/cookies'
+import { useAuth } from '../../hooks/auth'
+import { getUsername, removeAllCookies } from '../../services/cookies'
 import {
   AccountWrapper,
   HeaderItem,
@@ -17,6 +14,7 @@ import {
 } from './styles'
 
 export function Header() {
+  const { authed } = useAuth()
   const navigate = useNavigate()
 
   function handleSignupBtnClick() {
@@ -25,14 +23,6 @@ export function Header() {
 
   function handleLoginBtnClick() {
     navigate('/login')
-  }
-
-  function isUserLoggedIn() {
-    const accessToken = getAccessToken()
-    if (accessToken) {
-      return true
-    }
-    return false
   }
 
   const username = getUsername()
@@ -51,7 +41,7 @@ export function Header() {
         <HeaderItem>Blog</HeaderItem>
       </NavigationWrapper>
       <AccountWrapper>
-        {isUserLoggedIn() ? (
+        {authed ? (
           <>
             <SmallText>Hello, {username}</SmallText>
             <LogoutText onClick={handleLogout}>log out</LogoutText>
