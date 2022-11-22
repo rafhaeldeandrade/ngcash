@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 import {
   PlusIcon,
   SmallFeatureTitleWrapper,
@@ -28,10 +28,10 @@ export function CashbackCard({ isOpen, handleOnClick }: CashbackCardProps) {
       {isOpen && (
         <SmallFeatureOpenText>
           The way it works is simple: every time you shop on one of our partner
-          websites, we'll automatically credit your LoremIpsum account with some
-          amount. You can then use this money to redeem offers from our partner
-          brands or use it to buy other products through the sites where you
-          shopped.
+          websites, we&apos;ll automatically credit your LoremIpsum account with
+          some amount. You can then use this money to redeem offers from our
+          partner brands or use it to buy other products through the sites where
+          you shopped.
         </SmallFeatureOpenText>
       )}
     </SmallFeatureCardContainer>
