@@ -4,5 +4,5 @@ import { Decimal } from '@prisma/client/runtime'
 export type Account = {
   id: UniqueId
   balance: Decimal
-  user?: User
+  user?: User | null
 }

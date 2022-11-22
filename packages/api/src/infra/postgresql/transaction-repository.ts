@@ -33,7 +33,33 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
     return await prisma.transaction.findMany({
       where: filter,
       skip,
-      take
+      take,
+      select: {
+        id: true,
+        amount: true,
+        debitedAccount: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                username: true
+              }
+            }
+          }
+        },
+        creditedAccount: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                username: true
+              }
+            }
+          }
+        }
+      }
     })
   }
 

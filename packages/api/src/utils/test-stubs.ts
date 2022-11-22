@@ -98,7 +98,21 @@ export class AccountRepositoryStub implements AccountRepository {
 export const fakeTransaction = {
   id: faker.datatype.number(),
   debitedAccountId: faker.datatype.number(),
+  debitedAccount: {
+    id: faker.datatype.number(),
+    user: {
+      id: faker.datatype.number(),
+      username: faker.internet.userName()
+    }
+  },
   creditedAccountId: faker.datatype.number(),
+  creditedAccount: {
+    id: faker.datatype.number(),
+    user: {
+      id: faker.datatype.number(),
+      username: faker.internet.userName()
+    }
+  },
   amount: new Prisma.Decimal(faker.datatype.number())
 }
 export class TransactionRepositoryStub implements TransactionRepository {
@@ -107,7 +121,7 @@ export class TransactionRepositoryStub implements TransactionRepository {
     toId: number,
     amount: Prisma.Decimal
   ): Promise<Transaction> {
-    return fakeTransaction
+    return fakeTransaction as Transaction
   }
 
   async findAll() {
