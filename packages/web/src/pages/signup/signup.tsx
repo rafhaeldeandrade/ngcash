@@ -98,6 +98,7 @@ export function SignUp() {
       </ImageSideWrapper>
       <FormSideWrapper>
         <FormSide>
+          <Link to="/">{'<'} Back to home page</Link>
           <FormSideText>Create your account</FormSideText>
           <Form onSubmit={handleSubmit(addAccount)}>
             <>
