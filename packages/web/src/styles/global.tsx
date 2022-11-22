@@ -1,16 +1,27 @@
 import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+  @font-face {
+  font-family: 'AtypDisplay-Medium';
+  font-style: normal;
+  src: local('AtypDisplay-Medium'), url(AtypDisplay-Medium.ttf) format('truetype');
+}
+
   * {
     box-sizing: border-box;
+    /* outline: 1px solid red;
+    outline-offset: -1px; */
   }
   html, body {
     min-height: 100%;
-    background: #fff;
+    background: #f7f6f7;
     color: #000;
   }
 
   body {
+    font-family: "AtypDisplay-Medium", sans-serif;
     text-rendering: optimizeLegibility;
   }
 
@@ -50,6 +61,11 @@ export const GlobalStyle = createGlobalStyle`
   img {
     border: none;
     max-width: 100%;
+  }
+
+  button {
+    border: none;
+    font-family: 'AtypDisplay-Medium', sans-serif;
   }
 
   input[type="submit"]::-moz-focus-inner,

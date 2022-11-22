@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
-import { Home } from "./pages/home";
+import { Home } from './pages/home/home'
 
 export function AppRoutes() {
   return (
@@ -9,5 +9,5 @@ export function AppRoutes() {
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>
-  );
+  )
 }
