@@ -1,3 +1,6 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { Header } from '../../components/header/header'
 import {
   HomeContainer,
@@ -17,7 +20,6 @@ import { SendMoneyCard } from '../../components/home/small-feature-card/send-mon
 import { ReceiveMoneyCard } from '../../components/home/small-feature-card/receive-money-card'
 import { CashbackCard } from '../../components/home/small-feature-card/cashback-card'
 import { LatestUpdatesCard } from '../../components/home/latest-updates-card'
-import React, { useState } from 'react'
 
 export function Home() {
   const [openFeaturesCard, setOpenFeaturesCard] = useState({
@@ -25,6 +27,7 @@ export function Home() {
     receiveMoney: false,
     cashback: false
   })
+  const navigate = useNavigate()
 
   function handleOnclick(e: React.MouseEvent<HTMLDivElement>) {
     const { id } = e.target as HTMLDivElement
@@ -32,6 +35,10 @@ export function Home() {
       ...openFeaturesCard,
       [id]: !prevState[id as keyof typeof openFeaturesCard]
     }))
+  }
+
+  function handleSignupBtnClick() {
+    navigate('/signup')
   }
 
   return (
@@ -50,7 +57,9 @@ export function Home() {
               phone whenever you want to.
             </OpenAccountText>
             <ButtonAndTextContainer>
-              <OpenAccountButton>Open an account</OpenAccountButton>
+              <OpenAccountButton onClick={handleSignupBtnClick}>
+                Open an account
+              </OpenAccountButton>
               <DownloadAppContainer>
                 <ArrowCircleRightIcon />
                 <DownloadAppText>Get the app</DownloadAppText>

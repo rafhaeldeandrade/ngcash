@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Logo } from '../../assets/logo'
 import {
   AccountWrapper,
@@ -9,6 +10,12 @@ import {
 } from './styles'
 
 export function Header() {
+  const navigate = useNavigate()
+
+  function handleSignupBtnClick() {
+    navigate('/signup')
+  }
+
   return (
     <StyledHeader>
       <NavigationWrapper>
@@ -19,7 +26,7 @@ export function Header() {
       </NavigationWrapper>
       <AccountWrapper>
         <HeaderItem>Log in</HeaderItem>
-        <SignUpButton>Sign up</SignUpButton>
+        <SignUpButton onClick={handleSignupBtnClick}>Sign up</SignUpButton>
       </AccountWrapper>
     </StyledHeader>
   )
