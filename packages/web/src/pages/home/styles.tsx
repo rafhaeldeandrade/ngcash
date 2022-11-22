@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { ArrowCircleRight } from '@styled-icons/evaicons-solid'
 import { ArrowUpRightCircle } from '@styled-icons/bootstrap'
-import { Plus, Minus } from '@styled-icons/evil'
+import { Plus } from '@styled-icons/evil'
 
 export const HomeContainer = styled.main`
   max-width: 1120px;

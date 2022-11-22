@@ -43,3 +43,14 @@ export const SignUpButton = styled.button`
     cursor: pointer;
   }
 `
+
+export const SmallText = styled.span`
+  font-size: 1rem;
+  color: #050724;
+`
+
+export const LogoutText = styled.span`
+  font-size: 0.8rem;
+  margin-left: 1.6rem;
+  cursor: pointer;
+`
