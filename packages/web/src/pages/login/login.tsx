@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CreateAccountImage from '../../assets/create-account.svg'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   ErrorText,
@@ -28,15 +28,11 @@ export function Login() {
   } = useForm({
     mode: 'onChange'
   })
-
-  const { login } = useAuth()
+  const { login, authed } = useAuth()
   const navigate = useNavigate()
 
   function cleanInput() {
-    reset({
-      username: '',
-      password: ''
-    })
+    reset()
   }
 
   function cleanInputErrors() {
@@ -54,8 +50,8 @@ export function Login() {
         accountId: result.accountId
       })
       login()
-      navigate('/dashboard')
     }
+
     if (result?.statusCode === 400) {
       cleanInputErrors()
       if (result.error.includes('username')) {
@@ -92,6 +88,10 @@ export function Login() {
       }
     }
   }
+
+  useEffect(() => {
+    if (authed) navigate('/dashboard')
+  }, [authed, navigate])
 
   return (
     <LoginContainer>

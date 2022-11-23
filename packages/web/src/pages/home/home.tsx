@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Header } from '../../components/header/header'
@@ -40,11 +40,12 @@ export function Home() {
   }
 
   function handleCallToAction() {
-    if (authed) {
-      return navigate('/dashboard')
-    }
     navigate('/signup')
   }
+
+  useEffect(() => {
+    if (authed) navigate('/dashboard')
+  })
 
   return (
     <>
@@ -63,7 +64,7 @@ export function Home() {
             </OpenAccountText>
             <ButtonAndTextContainer>
               <OpenAccountButton onClick={handleCallToAction}>
-                {authed ? 'Go to dashboard' : 'Open an account'}
+                Open an account
               </OpenAccountButton>
               <DownloadAppContainer>
                 <ArrowCircleRightIcon />

@@ -1,15 +1,15 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react'
-import { getAccessToken } from '../services/cookies'
+import { getAccessToken, removeAllCookies } from '../services/cookies'
 
 const authContext = createContext({})
 
-function isLoggedIn() {
-  const accessToken = getAccessToken()
-  if (accessToken) return true
-  return false
-}
-
 export function useAuth() {
+  function isLoggedIn() {
+    const accessToken = getAccessToken()
+    if (accessToken) return true
+    return false
+  }
+
   const [authed, setAuthed] = useState(isLoggedIn())
 
   return {
@@ -18,6 +18,7 @@ export function useAuth() {
       setAuthed(true)
     },
     logout() {
+      removeAllCookies()
       setAuthed(false)
     }
   }

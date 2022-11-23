@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Logo } from '../../assets/logo'
 import { useAuth } from '../../hooks/auth'
-import { getUsername, removeAllCookies } from '../../services/cookies'
+import { getUsername } from '../../services/cookies'
 import {
   AccountWrapper,
   HeaderItem,
@@ -14,7 +14,7 @@ import {
 } from './styles'
 
 export function Header() {
-  const { authed } = useAuth()
+  const { authed, logout } = useAuth()
   const navigate = useNavigate()
 
   function handleSignupBtnClick() {
@@ -28,7 +28,7 @@ export function Header() {
   const username = getUsername()
 
   function handleLogout() {
-    removeAllCookies()
+    logout()
     navigate('/')
   }
 
