@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
 }
 
@@ -9,29 +9,29 @@ datasource db {
 }
 
 model Account {
-  id                    Int           @id @default(autoincrement())
-  balance               Decimal       @db.Decimal(19, 4)
-  user                  User?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  debitedTransactions   Transaction[] @relation("DebitedTransactions")
-  creditedTransactions  Transaction[] @relation("CreditedTransactions")
+  id                   Int           @id @default(autoincrement())
+  balance              Decimal       @db.Decimal(19, 4)
+  user                 User?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  debitedTransactions  Transaction[] @relation("DebitedTransactions")
+  creditedTransactions Transaction[] @relation("CreditedTransactions")
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique @db.VarChar(25)
-  password     String        @db.VarChar(100)
-  accountId    Int           @unique
-  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  accessToken  String?       @db.VarChar(180)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id          Int      @id @default(autoincrement())
+  username    String   @unique @db.VarChar(25)
+  password    String   @db.VarChar(100)
+  accountId   Int      @unique
+  account     Account  @relation(fields: [accountId], references: [id])
+  accessToken String?  @db.VarChar(180)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Transaction {
   id                Int      @id @default(autoincrement())
-  debitedAccountId  Int      @unique
+  debitedAccountId  Int
   debitedAccount    Account  @relation("DebitedTransactions", fields: [debitedAccountId], references: [id])
   creditedAccountId Int
   creditedAccount   Account  @relation("CreditedTransactions", fields: [creditedAccountId], references: [id])
