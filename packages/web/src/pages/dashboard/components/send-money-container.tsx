@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import MaskedInput from 'react-text-mask'
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { Form, SendMoneyContainer } from '../styles'
+import { sendMoney } from '../../../services/bank.api'
+import { ErrorText, Form, SendMoneyContainer, SuccessText } from '../styles'
 
 export function SendMoneyCard() {
-  const { register, handleSubmit, control } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset
+  } = useForm({
     mode: 'onChange'
   })
+  const [usernameError, setUsernameError] = useState('')
+  const [amountError, setAmountError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const defaultMaskOptions = {
     prefix: 'R$',
@@ -43,8 +53,38 @@ export function SendMoneyCard() {
     }
   }
 
+  function cleanInputErrors() {
+    setUsernameError('')
+    setAmountError('')
+    setSuccessMessage('')
+  }
+
+  function cleanInputs() {
+    reset({
+      usernameToCashIn: '',
+      amount: ''
+    })
+  }
+
   async function addTransaction(data: any) {
-    console.log(data)
+    const result = await sendMoney(data)
+    if (result?.statusCode === 201) {
+      cleanInputErrors()
+      cleanInputs()
+      setSuccessMessage('Money sent successfully')
+    }
+    if (result?.error === 'Balance is not enough') {
+      cleanInputErrors()
+      setAmountError('Balance is not enough')
+    }
+    if (result?.error === 'User not found') {
+      cleanInputErrors()
+      setUsernameError('User not found')
+    }
+    if (result?.error === 'User not authorized') {
+      cleanInputErrors()
+      setUsernameError('You cannot send money to yourself')
+    }
   }
 
   return (
@@ -57,7 +97,14 @@ export function SendMoneyCard() {
           {...register('usernameToCashIn', registerOptions.usernameToCashIn)}
           type="text"
           placeholder="Username"
+          onBlur={cleanInputErrors}
         />
+        {errors?.usernameToCashIn && (
+          <ErrorText>
+            <>{errors.usernameToCashIn.message}</>
+          </ErrorText>
+        )}
+        {usernameError && <ErrorText>{usernameError}</ErrorText>}
         <label htmlFor="amount">Amount</label>
         <Controller
           name="amount"
@@ -68,10 +115,18 @@ export function SendMoneyCard() {
               mask={currencyMask}
               value={value}
               onChange={onChange}
+              onBlur={cleanInputErrors}
             ></MaskedInput>
           )}
         />
+        {errors?.amount && (
+          <ErrorText>
+            <>{errors.amount.message}</>
+          </ErrorText>
+        )}
+        {amountError && <ErrorText>{amountError}</ErrorText>}
         <input type="submit" />
+        {successMessage && <SuccessText>{successMessage}</SuccessText>}
       </Form>
     </SendMoneyContainer>
   )

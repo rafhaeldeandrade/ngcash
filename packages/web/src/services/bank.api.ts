@@ -115,3 +115,42 @@ export async function getTransactions({ type, page }: GetTransactionsProps) {
     }
   }
 }
+
+interface SendMoneyProps {
+  usernameToCashIn: string
+  amount: string
+}
+
+export async function sendMoney({ usernameToCashIn, amount }: SendMoneyProps) {
+  const controller = new AbortController()
+  const accessToken = getAccessToken()
+  const amountToSend = parseFloat(
+    amount.replace('R$', '').replace('.', '').replace(',', '.').trim()
+  )
+
+  try {
+    const result = await axiosGateway.post(
+      `/transactions`,
+      {
+        usernameToCashIn,
+        amount: amountToSend
+      },
+      {
+        headers: {
+          Authorization: accessToken
+        },
+        signal: controller.signal
+      }
+    )
+    return {
+      statusCode: result?.status
+    }
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      return {
+        error: e.response?.data.message,
+        statusCode: e.response?.status
+      }
+    }
+  }
+}

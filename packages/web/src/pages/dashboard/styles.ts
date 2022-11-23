@@ -101,7 +101,7 @@ export const TransactionsTableRowItem = styled.span`
 
 export const SendMoneyContainer = styled.div`
   grid-area: send-money;
-  height: 26rem;
+  min-height: 26rem;
   display: flex;
   flex-direction: column;
   padding: 1rem 2rem 2rem 2rem;
@@ -156,9 +156,23 @@ export const Form = styled.form`
     border: 0;
     cursor: pointer;
     padding: 1rem;
+    transition: all 0.2s ease-in-out;
 
     &:hover {
-      filter: brightness(0.9);
+      background-color: #ffbf54;
+      color: #181a22;
     }
   }
+`
+
+export const ErrorText = styled.span`
+  color: red;
+  margin-bottom: 0.8rem;
+  text-align: center;
+`
+
+export const SuccessText = styled.span`
+  color: green;
+  text-align: center;
+  margin-bottom: 0.8rem;
 `
