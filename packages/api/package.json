@@ -13,7 +13,7 @@
     "test:unit": "npm test -- -c jest.config.unit.ts --watch --maxWorkers=25%",
     "test:integration": "npm test -- -c jest.config.integration.ts --watch --runInBand",
     "test:precommit": "npm test -- -c jest.config.ts --maxWorkers=25% --findRelatedTests",
-    "test:prepush": "npm test -- -c jest.config.ts --coverage --maxWorkers=25%",
+    "test:prepush": "npm test -- -c jest.config.ts --maxWorkers=25%",
     "lint": "eslint --ext .ts src --fix"
   },
   "devDependencies": {
