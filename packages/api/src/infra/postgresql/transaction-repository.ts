@@ -21,7 +21,14 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
     input: TransactionRepositoryFindAllInput
   ): Promise<Transaction[]> {
     const filter: any = {}
-    const { createdAt, debitedAccountId, creditedAccountId, skip, take } = input
+    const {
+      startDate,
+      endDate,
+      debitedAccountId,
+      creditedAccountId,
+      skip,
+      take
+    } = input
     if (debitedAccountId) filter.debitedAccountId = debitedAccountId
     if (creditedAccountId) filter.creditedAccountId = creditedAccountId
     if (debitedAccountId && creditedAccountId) {
@@ -29,7 +36,11 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
       delete filter.debitedAccountId
       filter.OR = [{ debitedAccountId }, { creditedAccountId }]
     }
-    if (createdAt) filter.createdAt = createdAt
+    if (startDate && endDate)
+      filter.createdAt = {
+        gte: startDate,
+        lte: endDate
+      }
     return await prisma.transaction.findMany({
       where: filter,
       skip,
@@ -66,7 +77,7 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
 
   async count(input: TransactionRepositoryFindAllInput): Promise<number> {
     const filter: any = {}
-    const { createdAt, debitedAccountId, creditedAccountId, skip, take } = input
+    const { startDate, endDate, debitedAccountId, creditedAccountId } = input
     if (debitedAccountId) filter.debitedAccountId = debitedAccountId
     if (creditedAccountId) filter.creditedAccountId = creditedAccountId
     if (debitedAccountId && creditedAccountId) {
@@ -74,7 +85,11 @@ export class PostgreSQLTransactionRepository implements TransactionRepository {
       delete filter.debitedAccountId
       filter.OR = [{ debitedAccountId }, { creditedAccountId }]
     }
-    if (createdAt) filter.createdAt = createdAt
+    if (startDate && endDate)
+      filter.createdAt = {
+        gte: startDate,
+        lte: endDate
+      }
     return await prisma.transaction.count({
       where: filter
     })

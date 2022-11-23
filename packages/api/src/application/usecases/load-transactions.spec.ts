@@ -39,11 +39,12 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(findAllSpy).toHaveBeenCalledTimes(1)
     expect(findAllSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       debitedAccountId: input.accountId,
       creditedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 
@@ -55,11 +56,12 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(countSpy).toHaveBeenCalledTimes(1)
     expect(countSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       debitedAccountId: input.accountId,
       creditedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 
@@ -71,10 +73,11 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(findAllSpy).toHaveBeenCalledTimes(1)
     expect(findAllSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       creditedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 
@@ -86,10 +89,11 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(countSpy).toHaveBeenCalledTimes(1)
     expect(countSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       creditedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 
@@ -101,10 +105,11 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(findAllSpy).toHaveBeenCalledTimes(1)
     expect(findAllSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       debitedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 
@@ -116,10 +121,11 @@ describe('LoadTransactionsUseCase', () => {
     await sut.execute(input)
     expect(countSpy).toHaveBeenCalledTimes(1)
     expect(countSpy).toHaveBeenCalledWith({
-      createdAt: input.date,
       debitedAccountId: input.accountId,
       skip: (input.page - 1) * 10,
-      take: 10
+      take: 10,
+      startDate: expect.any(Date),
+      endDate: expect.any(Date)
     })
   })
 

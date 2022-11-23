@@ -2,7 +2,8 @@ import { Decimal } from '@prisma/client/runtime'
 import { Transaction } from '@/domain/entitities/transaction'
 
 export type TransactionRepositoryFindAllInput = {
-  createdAt?: Date
+  startDate?: Date
+  endDate?: Date
   debitedAccountId?: number
   creditedAccountId?: number
   skip?: number

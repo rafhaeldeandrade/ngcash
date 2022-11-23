@@ -19,7 +19,12 @@ export function makeLoadTransactionsController(): Controller {
     transactionType: z.enum(['all', 'cashIn', 'cashOut']),
     date: z
       .preprocess((arg) => {
-        if (typeof arg == 'string' || arg instanceof Date) return new Date(arg)
+        if (typeof arg == 'string') {
+          return new Date(Number(arg))
+        }
+        if (arg instanceof Date) {
+          return arg
+        }
       }, z.date())
       .optional()
   })
