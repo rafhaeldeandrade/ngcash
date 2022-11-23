@@ -3,19 +3,23 @@ import { useState, useEffect } from 'react'
 import { getCurrentBalance } from '../services/bank.api'
 
 interface UseBalanceReturn {
-  balance: number
+  balance: string
   isLoading: boolean
 }
 
 export function useUserBalance(): UseBalanceReturn {
-  const [balance, setBalance] = useState(0)
+  const [balance, setBalance] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     async function fetchBalance() {
       const response = await getCurrentBalance()
       if (response?.statusCode === 200) {
-        setBalance(Math.floor(response.balance * 100) / 100)
+        setBalance(
+          parseFloat(
+            (Math.floor(response.balance * 100) / 100).toString()
+          ).toFixed(2)
+        )
       }
     }
     setIsLoading(true)

@@ -83,17 +83,25 @@ export async function getCurrentBalance() {
 interface GetTransactionsProps {
   type?: 'cashIn' | 'cashOut' | 'all'
   page?: number
+  date?: Date
 }
 
-export async function getTransactions({ type, page }: GetTransactionsProps) {
+export async function getTransactions({
+  type,
+  page,
+  date
+}: GetTransactionsProps) {
   const controller = new AbortController()
   const accessToken = getAccessToken()
   const transactionType = type || 'all'
   const pageNumber = page || 1
+  const formattedDate = date ? date.getTime() : undefined
 
   try {
     const result = await axiosGateway.get(
-      `/transactions/?page=${pageNumber}&transactionType=${transactionType}`,
+      `/transactions/?page=${pageNumber}&transactionType=${transactionType}${
+        formattedDate ? `&date=${formattedDate}` : ''
+      }`,
       {
         headers: {
           Authorization: accessToken

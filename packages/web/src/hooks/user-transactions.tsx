@@ -19,7 +19,8 @@ interface Transaction {
 
 export function useUserAccountTransactions(
   page?: number,
-  type?: 'cashIn' | 'cashOut' | 'all'
+  type?: 'cashIn' | 'cashOut' | 'all',
+  date?: Date
 ) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [totalTransactions, setTotalTransactions] = useState(0)
@@ -30,7 +31,8 @@ export function useUserAccountTransactions(
     async function fetchTransactions() {
       const response = await getTransactions({
         page,
-        type
+        type,
+        date
       })
       if (response?.statusCode === 200) {
         setTransactions(response.transactions)
@@ -42,7 +44,7 @@ export function useUserAccountTransactions(
     setIsLoading(true)
     fetchTransactions()
     setIsLoading(false)
-  }, [page, type])
+  }, [page, type, date])
 
   return {
     transactions,

@@ -27,7 +27,7 @@ export const DashboardContentContainer = styled.div`
 
 export const DashboardCards = styled.div`
   display: grid;
-  grid-template-columns: 65% 30%;
+  grid-template-columns: 68% 28%;
   grid-template-areas:
     'transactions send-money'
     'transactions receive-money';
@@ -175,4 +175,8 @@ export const SuccessText = styled.span`
   color: green;
   text-align: center;
   margin-bottom: 0.8rem;
+`
+
+export const DatepickerWrapper = styled.div`
+  max-width: 5rem;
 `
