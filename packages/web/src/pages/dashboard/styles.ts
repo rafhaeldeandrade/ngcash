@@ -98,3 +98,67 @@ export const TransactionsTableRowItem = styled.span`
   font-size: 0.8rem;
   text-align: center;
 `
+
+export const SendMoneyContainer = styled.div`
+  grid-area: send-money;
+  height: 26rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem 2rem 2rem;
+  border: 2px solid #181a22;
+  border-bottom: 1rem solid #181a22;
+  border-radius: 2rem;
+`
+
+export const Input = styled.input`
+  margin-bottom: 1rem;
+  border-radius: 0.4rem;
+  outline: 0;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  font-size: 1rem;
+`
+
+export const SendMoneyButton = styled.input`
+  margin-top: 1rem;
+  border-radius: 0.4rem;
+  outline: 0;
+  border: 0;
+  padding: 1rem;
+  font-size: 1rem;
+  background: #181a22;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #ffbf54;
+    color: #181a22;
+  }
+`
+
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+
+  input {
+    margin-bottom: 1rem;
+    border-radius: 0.4rem;
+    outline: 0;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  input[type='submit'] {
+    background-color: #000;
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    padding: 1rem;
+
+    &:hover {
+      filter: brightness(0.9);
+    }
+  }
+`

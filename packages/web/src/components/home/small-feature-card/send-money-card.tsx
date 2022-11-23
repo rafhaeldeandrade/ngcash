@@ -10,7 +10,9 @@ import {
 
 interface SmallFeatureCardProps {
   isOpen: boolean
-  handleOnClick: (event: React.MouseEvent<HTMLDivElement>) => void
+  handleOnClick: (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => void | (() => void)
 }
 
 export function SendMoneyCard({
