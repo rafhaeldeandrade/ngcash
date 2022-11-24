@@ -13,8 +13,8 @@
     "test": "jest --passWithNoTests --silent --noStackTrace",
     "test:unit": "npm test -- -c jest.config.unit.ts --watch --maxWorkers=25%",
     "test:integration": "npm test -- -c jest.config.integration.ts --watch --runInBand",
-    "test:precommit": "npm test -- -c jest.config.ts --maxWorkers=25% --findRelatedTests",
-    "test:prepush": "npm test -- -c jest.config.ts --maxWorkers=25%",
+    "test:precommit": "npm test -- -c jest.config.unit.ts --maxWorkers=25% --findRelatedTests",
+    "test:prepush": "npm test -- -c jest.config.ts --runInBand",
     "lint": "eslint --ext .ts src --fix"
   },
   "devDependencies": {

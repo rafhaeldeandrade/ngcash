@@ -9,6 +9,6 @@ export default {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
-  testMatch: ['**/*.spec.ts', '**/*.test.ts'],
+  testMatch: ['**/*.spec.ts'],
   setupFiles: ['<rootDir>/test/setup-tests.ts']
 }
