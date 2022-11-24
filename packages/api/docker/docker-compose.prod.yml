@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  ngcash-api:
+    container_name: ngcash-api-prod
+    build:
+      context: ../
+      dockerfile: ./docker/dockerfile
+    command: 'yarn start'
+    depends_on:
+      - ngcash-postgresql-db
+    networks:
+      - ngcash-network

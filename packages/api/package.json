@@ -6,9 +6,11 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "tsnd --respawn --exit-child -r tsconfig-paths/register src/main/server.ts",
+    "start": "pm2-runtime ./dist/main/server.js",
+    "build": "tsc --build && tsc-alias -p tsconfig.json",
     "migrate:postgresql:test": "dotenv -e .env.test -- npx prisma migrate dev --name postgres-test",
     "migrate:postgresql:dev": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-dev",
-    "migrate:postgresql:prod": "dotenv -e .env.production -- npx prisma migrate dev --name postgres-prod",
+    "migrate:postgresql:prod": "npx prisma migrate dev --name postgres-prod",
     "test": "jest --passWithNoTests --silent --noStackTrace",
     "test:unit": "npm test -- -c jest.config.unit.ts --watch --maxWorkers=25%",
     "test:integration": "npm test -- -c jest.config.integration.ts --watch --runInBand",
@@ -33,6 +35,7 @@
     "prettier": "2.5.1",
     "ts-jest": "^29.0.3",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.7.1",
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.9.3"
   },

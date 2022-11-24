@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  ngcash-api:
+    container_name: ngcash-api-dev
+    build:
+      target: development
+    command: yarn start:dev
+    volumes:
+      - ../src:/usr/src/app/src
+      - ../.env:/usr/src/app/.env.development
+    networks:
+      - ngcash-network

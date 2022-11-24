@@ -1,0 +1,23 @@
+FROM node:16 AS base
+WORKDIR /usr/src/app
+RUN touch /usr/src/app/.env.development
+COPY package.json tsconfig.json ./
+
+FROM base as development
+ENV NODE_ENV=development
+RUN yarn install
+
+FROM base as build
+RUN yarn install
+COPY src ./src
+COPY prisma ./prisma
+RUN npx prisma generate
+RUN yarn build
+
+FROM build AS production
+ENV NODE_ENV=production
+COPY --from=build /usr/src/app/dist /usr/src/app/dist
+RUN yarn install --production
+COPY .env ./
+RUN npx prisma migrate dev --name postgres-prod
+RUN yarn global add pm2

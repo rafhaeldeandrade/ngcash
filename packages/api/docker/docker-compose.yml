@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  ngcash-postgresql-db:
+    container_name: ngcash-postgresql-db
+    image: 'postgres:14.6-alpine'
+    ports:
+      - '5432:5432'
+    volumes:
+      - './data:/var/lib/postgresql/data'
+    restart: on-failure:3
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+    networks:
+      - ngcash-network
+
+  ngcash-api:
+    build:
+      context: ../
+      dockerfile: ./docker/dockerfile
+    ports:
+      - '4000:4000'
+    depends_on:
+      - ngcash-postgresql-db
+    networks:
+      - ngcash-network
+
+networks:
+  ngcash-network:
+    driver: bridge
