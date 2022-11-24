@@ -42,7 +42,7 @@ describe('PostgreSQLAccountRepository.incrementBalance', () => {
     await prisma.$disconnect()
   })
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await prisma.user.deleteMany()
     await prisma.account.deleteMany()
   })

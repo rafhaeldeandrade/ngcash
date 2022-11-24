@@ -9,7 +9,7 @@ describe('PostgreSQLTransactionRepository.save', () => {
     await prisma.$disconnect()
   })
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await prisma.transaction.deleteMany()
     await prisma.account.deleteMany()
   })
