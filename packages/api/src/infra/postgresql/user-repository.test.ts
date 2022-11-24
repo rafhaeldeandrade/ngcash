@@ -10,8 +10,8 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
   })
 
   beforeEach(async () => {
-    await prisma.account.deleteMany()
     await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return User when a user was found by its username', async () => {
@@ -57,8 +57,8 @@ describe('PostgreSQLUserRepository.saveNewUser', () => {
   })
 
   beforeEach(async () => {
-    await prisma.account.deleteMany()
     await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it("should create an account and set its id to the user's accountId", async () => {
@@ -83,8 +83,8 @@ describe('PostgreSQLUserRepository.updateAccessToken', () => {
   })
 
   beforeEach(async () => {
-    await prisma.account.deleteMany()
     await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should update the user with the given accessToken', async () => {
@@ -117,8 +117,8 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
   })
 
   beforeEach(async () => {
-    await prisma.account.deleteMany()
     await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return user if it is found', async () => {
@@ -167,8 +167,8 @@ describe('PostgreSQLUserRepository.findUserById', () => {
   })
 
   beforeEach(async () => {
-    await prisma.account.deleteMany()
     await prisma.user.deleteMany()
+    await prisma.account.deleteMany()
   })
 
   it('should return user if it is found', async () => {
