@@ -11,7 +11,7 @@ datasource db {
 model Account {
   id                   Int           @id @default(autoincrement())
   balance              Decimal       @db.Decimal(19, 4)
-  user                 User?
+  user                 User?         @relation("AccountUser")
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   debitedTransactions  Transaction[] @relation("DebitedTransactions")
@@ -23,7 +23,7 @@ model User {
   username    String   @unique @db.VarChar(25)
   password    String   @db.VarChar(100)
   accountId   Int      @unique
-  account     Account  @relation(fields: [accountId], references: [id])
+  account     Account  @relation("AccountUser", fields: [accountId], references: [id], onDelete: Cascade)
   accessToken String?  @db.VarChar(180)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
