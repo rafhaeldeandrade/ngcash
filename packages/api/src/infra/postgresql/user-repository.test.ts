@@ -4,17 +4,17 @@ import { prisma } from '@/infra/postgresql/adapters/prisma-adapter'
 import PostgreSQLUserRepository from './user-repository'
 import { Prisma } from '@prisma/client'
 
-describe('PostgreSQLUserRepository.findUserByUsername', () => {
+describe('PostgreSQLUserRepository', () => {
   afterAll(async () => {
     await prisma.$disconnect()
   })
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await prisma.user.deleteMany()
     await prisma.account.deleteMany()
   })
 
-  it('should return User when a user was found by its username', async () => {
+  test('PostgreSQLUserRepository.findUserByUsername should return User when a user was found by its username', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const account = await prisma.account.create({
@@ -42,26 +42,15 @@ describe('PostgreSQLUserRepository.findUserByUsername', () => {
     })
   })
 
-  it('should return null when a user is not found', async () => {
+  test('PostgreSQLUserRepository.findUserByUsername should return null when a user is not found', async () => {
     const username = faker.internet.userName()
     const sut = new PostgreSQLUserRepository()
     const result = await sut.findUserByUsername(username)
 
     expect(result).toBeNull()
   })
-})
 
-describe('PostgreSQLUserRepository.saveNewUser', () => {
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
-
-  beforeEach(async () => {
-    await prisma.user.deleteMany()
-    await prisma.account.deleteMany()
-  })
-
-  it("should create an account and set its id to the user's accountId", async () => {
+  test("PostgreSQLUserRepository.saveNewUser should create an account and set its id to the user's accountId", async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
 
@@ -75,19 +64,8 @@ describe('PostgreSQLUserRepository.saveNewUser', () => {
 
     expect(account).not.toBeNull()
   })
-})
 
-describe('PostgreSQLUserRepository.updateAccessToken', () => {
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
-
-  beforeEach(async () => {
-    await prisma.user.deleteMany()
-    await prisma.account.deleteMany()
-  })
-
-  it('should update the user with the given accessToken', async () => {
+  test('PostgreSQLUserRepository.updateAccessToken should update the user with the given accessToken', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const account = await prisma.account.create({
@@ -109,19 +87,8 @@ describe('PostgreSQLUserRepository.updateAccessToken', () => {
 
     expect(result?.accessToken).toBe(accessToken)
   })
-})
 
-describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
-
-  beforeEach(async () => {
-    await prisma.user.deleteMany()
-    await prisma.account.deleteMany()
-  })
-
-  it('should return user if it is found', async () => {
+  test('PostgreSQLUserRepository.findUserByAccessToken should return user if it is found', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const accessToken = faker.datatype.uuid()
@@ -151,7 +118,7 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
     })
   })
 
-  it('should return null when user is not found', async () => {
+  test('PostgreSQLUserRepository.findUserByAccessToken should return null when user is not found', async () => {
     const accessToken = faker.datatype.uuid()
 
     const sut = new PostgreSQLUserRepository()
@@ -159,19 +126,8 @@ describe('PostgreSQLUserRepository.findUserByAccessToken', () => {
 
     expect(result).toBeNull()
   })
-})
 
-describe('PostgreSQLUserRepository.findUserById', () => {
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
-
-  beforeEach(async () => {
-    await prisma.user.deleteMany()
-    await prisma.account.deleteMany()
-  })
-
-  it('should return user if it is found', async () => {
+  test('PostgreSQLUserRepository.findUserById should return user if it is found', async () => {
     const username = faker.internet.userName()
     const password = faker.internet.password()
     const accessToken = faker.datatype.uuid()
@@ -201,7 +157,7 @@ describe('PostgreSQLUserRepository.findUserById', () => {
     })
   })
 
-  it('should return null when user is not found', async () => {
+  test('PostgreSQLUserRepository.findUserById should return null when user is not found', async () => {
     const fakeId = faker.datatype.number()
 
     const sut = new PostgreSQLUserRepository()
