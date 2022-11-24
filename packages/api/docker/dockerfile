@@ -18,6 +18,4 @@ FROM build AS production
 ENV NODE_ENV=production
 COPY --from=build /usr/src/app/dist /usr/src/app/dist
 RUN yarn install --production
-COPY .env ./
-RUN npx prisma migrate dev --name postgres-prod
 RUN yarn global add pm2

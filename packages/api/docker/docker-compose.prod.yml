@@ -6,7 +6,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/dockerfile
-    command: 'yarn start'
+    command: yarn start
     depends_on:
       - ngcash-postgresql-db
     networks:
